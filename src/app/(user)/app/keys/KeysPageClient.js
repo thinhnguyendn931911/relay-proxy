@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button, Card, Input } from "@/shared/components";
+import KeysTableSkeleton from "./KeysTableSkeleton";
 
 function formatDate(value) {
   if (!value) return "Never";
@@ -122,7 +123,7 @@ export default function KeysPageClient() {
 
         <Card title="Keys" icon="vpn_key">
           {loading ? (
-            <div className="py-8 text-center text-sm text-text-muted">Loading...</div>
+            <KeysTableSkeleton />
           ) : keys.length === 0 ? (
             <div className="py-8 text-center text-sm text-text-muted">No keys yet.</div>
           ) : (

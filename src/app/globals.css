@@ -207,6 +207,86 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.homepage-smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+.homepage-anchor {
+  scroll-margin-top: 5rem;
+}
+
+@keyframes homepage-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-motion-enter {
+  animation: homepage-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--motion-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.home-motion-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 560ms ease,
+    transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--motion-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.home-motion-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.home-motion-lift {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+@media (hover: hover) {
+  .home-motion-lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.home-motion-lift:focus-visible {
+  outline: 3px solid rgba(16, 185, 129, 0.3);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.homepage-smooth-scroll {
+    scroll-behavior: auto;
+  }
+
+  .home-motion-enter,
+  .home-motion-reveal,
+  .home-motion-reveal.is-visible,
+  .home-motion-lift {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .home-motion-lift:hover {
+    transform: none;
+  }
+}
+
 /* Selection - brand-tinted */
 ::selection {
   background-color: rgba(229, 106, 74, 0.25);

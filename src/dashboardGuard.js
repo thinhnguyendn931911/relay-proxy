@@ -166,13 +166,24 @@ export const __test__ = {
   canAccessLocalOnlyRoute,
 };
 
+function isApiRoute(pathname) {
+  return pathname.startsWith("/api/") || PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
+}
+
+function forbiddenResponse(request, pathname, message) {
+  if (isApiRoute(pathname)) {
+    return NextResponse.json({ error: message }, { status: 403 });
+  }
+  return NextResponse.redirect(new URL("/forbidden", request.url));
+}
+
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   // Local-only gate for spawn-capable / host-secret routes.
   if (LOCAL_ONLY_PATHS.some((p) => pathname.startsWith(p))) {
     if (!(await canAccessLocalOnlyRoute(request))) {
-      return NextResponse.json({ error: "Local only: CLI token required" }, { status: 403 });
+      return forbiddenResponse(request, pathname, "Local only: CLI token required");
     }
   }
 
@@ -209,13 +220,12 @@ export async function proxy(request) {
         requireLogin = settings.requireLogin !== false;
         tunnelDashboardAccess = settings.tunnelDashboardAccess === true;
 
-        // Block tunnel/tailscale access if disabled (redirect to login)
         if (!tunnelDashboardAccess) {
           const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
           const tunnelHost = settings.tunnelUrl ? new URL(settings.tunnelUrl).hostname.toLowerCase() : "";
           const tailscaleHost = settings.tailscaleUrl ? new URL(settings.tailscaleUrl).hostname.toLowerCase() : "";
           if ((tunnelHost && host === tunnelHost) || (tailscaleHost && host === tailscaleHost)) {
-            return NextResponse.redirect(new URL("/login", request.url));
+            return NextResponse.redirect(new URL("/forbidden", request.url));
           }
         }
       }
@@ -232,11 +242,11 @@ export async function proxy(request) {
       if (await verifyDashboardAuthToken(token)) {
         return NextResponse.next();
       } else {
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(new URL("/forbidden", request.url));
       }
     }
 
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/forbidden", request.url));
   }
 
   return NextResponse.next();

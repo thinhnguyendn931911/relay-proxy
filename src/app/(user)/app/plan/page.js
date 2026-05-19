@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PlanPageSkeleton from "./PlanPageSkeleton";
 
 const PAID_PLAN = {
   displayName: "Paid",
@@ -89,7 +90,7 @@ export default function PlanPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-center text-text-muted">Loading...</div>;
+  if (loading) return <PlanPageSkeleton />;
 
   const { subscription, plan, usage } = data || {};
 

@@ -37,6 +37,10 @@ function isPublicLlmApi(pathname) {
   return PUBLIC_LLM_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
+function isApiRoute(pathname) {
+  return pathname.startsWith("/api/") || PUBLIC_LLM_PREFIXES.some((p) => pathname.startsWith(p));
+}
+
 async function getRoleUser(authState) {
   const user = await getUserById(authState.userId);
   if (!user) return null;
@@ -58,12 +62,15 @@ async function clerkProxy(auth, request) {
     const user = await getRoleUser(authState);
 
     if (!user) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      if (isApiRoute(request.nextUrl.pathname)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL("/forbidden", request.url));
     }
 
     if (request.nextUrl.pathname.startsWith("/dashboard")) {
       if (user?.role !== "admin") {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return NextResponse.redirect(new URL("/forbidden", request.url));
       }
     }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import UsagePageSkeleton from "./UsagePageSkeleton";
 
 function formatDate(ts) {
   if (!ts) return "-";
@@ -35,7 +36,7 @@ export default function UsagePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-center text-text-muted">Loading...</div>;
+  if (loading) return <UsagePageSkeleton />;
   if (!data) return <div className="p-8 text-center text-red-500">Failed to load usage data</div>;
 
   const { period = {}, daily = [], recent = [] } = data;
