@@ -9,8 +9,7 @@ const mocks = vi.hoisted(() => ({
   })),
   legacyProxy: vi.fn(() => Symbol("legacy")),
   getUserById: vi.fn(),
-  createOrUpdateUser: vi.fn(),
-  ensureTrialSubscription: vi.fn(),
+  redirectToSignIn: vi.fn(() => ({ status: 302, location: "/sign-in" })),
   authState: { userId: "user_1", sessionClaims: { email: "op@example.com" } },
 }));
 
@@ -23,7 +22,10 @@ vi.mock("next/server", () => ({
 
 vi.mock("@clerk/nextjs/server", () => ({
   clerkMiddleware: vi.fn((handler) => (request, event) =>
-    handler(() => Promise.resolve(mocks.authState), request, event)
+    handler(() => Promise.resolve({
+      ...mocks.authState,
+      redirectToSignIn: mocks.redirectToSignIn,
+    }), request, event)
   ),
   createRouteMatcher: vi.fn((patterns) => (request) => {
     const pathname = request.nextUrl.pathname;
@@ -40,11 +42,6 @@ vi.mock("../../src/dashboardGuard.js", () => ({
 
 vi.mock("../../src/lib/saas/userRepo.js", () => ({
   getUserById: mocks.getUserById,
-  createOrUpdateUser: mocks.createOrUpdateUser,
-}));
-
-vi.mock("../../src/lib/saas/subscriptionRepo.js", () => ({
-  ensureTrialSubscription: mocks.ensureTrialSubscription,
 }));
 
 process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test";
@@ -75,6 +72,55 @@ describe("Clerk proxy API routing", () => {
     expect(response).toBeUndefined();
     expect(mocks.getUserById).toHaveBeenCalledWith("user_1");
     expect(mocks.legacyProxy).not.toHaveBeenCalled();
+  });
+
+  it("allows admin access to dashboard pages", async () => {
+    const response = await proxy(request("/dashboard/providers"));
+
+    expect(response).toBeUndefined();
+    expect(mocks.getUserById).toHaveBeenCalledWith("user_1");
+  });
+
+  it("rejects user-role access to dashboard pages", async () => {
+    mocks.getUserById.mockResolvedValue({ id: "user_1", isOperator: false });
+
+    const response = await proxy(request("/dashboard/providers"));
+
+    expect(response.status).toBe(403);
+    expect(response.body.error).toBe("Forbidden");
+  });
+
+  it("rejects missing SaaS rows for Clerk-protected app pages", async () => {
+    mocks.getUserById.mockResolvedValue(null);
+
+    const response = await proxy(request("/app/keys"));
+
+    expect(response.status).toBe(403);
+    expect(response.body.error).toBe("Forbidden");
+  });
+
+  it("allows user-role access to SaaS app pages", async () => {
+    mocks.getUserById.mockResolvedValue({ id: "user_1", isOperator: false });
+
+    const response = await proxy(request("/app/keys"));
+
+    expect(response).toBeUndefined();
+  });
+
+  it("rejects user-role access to operator APIs", async () => {
+    mocks.getUserById.mockResolvedValue({ id: "user_1", isOperator: false });
+
+    const response = await proxy(request("/api/providers"));
+
+    expect(response.status).toBe(403);
+    expect(response.body.error).toBe("Forbidden");
+  });
+
+  it("does not treat user SaaS self-service APIs as operator APIs", async () => {
+    const response = await proxy(request("/api/saas/keys"));
+
+    expect(response).toBeUndefined();
+    expect(mocks.getUserById).not.toHaveBeenCalled();
   });
 
   it("rejects unauthenticated dashboard API access", async () => {

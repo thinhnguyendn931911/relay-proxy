@@ -1,28 +1,23 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { createUserApiKey, listKeysForUser } from "@/lib/localDb";
-
-async function requireUserId() {
-  const { userId } = await auth();
-  return userId;
-}
+import { requireSaasUser } from "@/lib/saas/routeAuth.js";
 
 export async function GET() {
-  const userId = await requireUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authz = await requireSaasUser();
+  if (!authz.ok) return NextResponse.json({ error: authz.error }, { status: authz.status });
 
-  const keys = await listKeysForUser(userId);
+  const keys = await listKeysForUser(authz.user.id);
   return NextResponse.json({ keys });
 }
 
 export async function POST(request) {
-  const userId = await requireUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authz = await requireSaasUser();
+  if (!authz.ok) return NextResponse.json({ error: authz.error }, { status: authz.status });
 
   const body = await request.json().catch(() => ({}));
   const name = String(body.name || "").trim();
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 
-  const key = await createUserApiKey({ userId, name });
+  const key = await createUserApiKey({ userId: authz.user.id, name });
   return NextResponse.json({ key }, { status: 201 });
 }

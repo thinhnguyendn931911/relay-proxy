@@ -1,12 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { getAdapter } from "@/lib/db/driver.js";
+import { requireSaasUser } from "@/lib/saas/routeAuth.js";
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authz = await requireSaasUser();
+  if (!authz.ok) return NextResponse.json({ error: authz.error }, { status: authz.status });
 
   const db = await getAdapter();
+  const userId = authz.user.id;
 
   const sub = await db.get(
     `SELECT s.*, p.slug AS plan_slug, p.display_name AS plan_display_name,

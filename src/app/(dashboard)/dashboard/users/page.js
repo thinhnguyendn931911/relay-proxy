@@ -95,7 +95,7 @@ export default function UsersPage() {
                     </td>
                     <td className="px-4 py-2 text-text-muted">{u.planName || "-"}</td>
                     <td className="px-4 py-2 text-text-muted capitalize">{u.subscriptionStatus || "-"}</td>
-                    <td className="px-4 py-2 text-text-muted">{u.isOperator ? "Operator" : "User"}</td>
+                    <td className="px-4 py-2 text-text-muted">{u.isOperator ? "Admin" : "User"}</td>
                     <td className="px-4 py-2 text-text-muted">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "-"}</td>
                   </tr>
                 ))}

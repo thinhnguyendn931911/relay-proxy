@@ -61,11 +61,9 @@ export default function UserDetailPage() {
         }`}>
           {user.status}
         </span>
-        {user.isOperator && (
-          <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
-            Operator
-          </span>
-        )}
+        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+          {user.isOperator ? "Admin" : "User"}
+        </span>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
@@ -117,6 +115,13 @@ export default function UserDetailPage() {
             className="rounded-lg bg-yellow-500/10 px-4 py-2 text-sm font-medium text-yellow-600 hover:bg-yellow-500/20 disabled:opacity-50"
           >
             Reset Trial
+          </button>
+          <button
+            disabled={acting}
+            onClick={() => act({ action: "set_operator", isOperator: !user.isOperator })}
+            className="rounded-lg bg-accent/10 px-4 py-2 text-sm font-medium text-accent hover:bg-accent/20 disabled:opacity-50"
+          >
+            {user.isOperator ? "Demote to User" : "Promote to Admin"}
           </button>
           {subscription && plans.length > 0 && (
             <select

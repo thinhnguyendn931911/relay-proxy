@@ -1,8 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { proxy as legacyProxy } from "./dashboardGuard";
-import { getUserById, createOrUpdateUser } from "./lib/saas/userRepo.js";
-import { ensureTrialSubscription } from "./lib/saas/subscriptionRepo.js";
+import { getUserById } from "./lib/saas/userRepo.js";
 
 const isClerkProtectedRoute = createRouteMatcher(["/app(.*)", "/dashboard(.*)"]);
 const isClerkAwareRoute = createRouteMatcher(["/app(.*)", "/dashboard(.*)", "/api/saas(.*)", "/api/stripe(.*)"]);
@@ -16,11 +15,17 @@ const isOperatorApiRoute = createRouteMatcher([
   "/api/models(.*)",
   "/api/usage(.*)",
   "/api/oauth(.*)",
+  "/api/cloud(.*)",
   "/api/media-providers(.*)",
   "/api/pricing(.*)",
   "/api/tags(.*)",
   "/api/cli-tools(.*)",
+  "/api/mcp(.*)",
   "/api/translator(.*)",
+  "/api/tunnel(.*)",
+  "/api/saas/users(.*)",
+  "/api/saas/plans(.*)",
+  "/api/saas/usage-aggregate(.*)",
 ]);
 const PUBLIC_LLM_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/api/v1beta"];
 const hasClerkConfig = Boolean(
@@ -32,20 +37,13 @@ function isPublicLlmApi(pathname) {
   return PUBLIC_LLM_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-async function ensureUser(authState) {
-  let user = await getUserById(authState.userId);
-  if (!user) {
-    const claims = authState.sessionClaims || {};
-    const email =
-      claims.email ||
-      claims.email_address ||
-      claims.primary_email_address ||
-      (claims.email_addresses && claims.email_addresses[0]) ||
-      `${authState.userId}@clerk`;
-    user = await createOrUpdateUser({ id: authState.userId, email });
-    await ensureTrialSubscription(user.id);
-  }
-  return user;
+async function getRoleUser(authState) {
+  const user = await getUserById(authState.userId);
+  if (!user) return null;
+  return {
+    ...user,
+    role: user.isOperator ? "admin" : "user",
+  };
 }
 
 async function clerkProxy(auth, request) {
@@ -57,9 +55,14 @@ async function clerkProxy(auth, request) {
     const authState = await auth();
     if (!authState.userId) return authState.redirectToSignIn();
 
+    const user = await getRoleUser(authState);
+
+    if (!user) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     if (request.nextUrl.pathname.startsWith("/dashboard")) {
-      const user = await ensureUser(authState);
-      if (!user?.isOperator) {
+      if (user?.role !== "admin") {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
     }
@@ -73,8 +76,8 @@ async function clerkProxy(auth, request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await ensureUser(authState);
-    if (!user?.isOperator) {
+    const user = await getRoleUser(authState);
+    if (user?.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

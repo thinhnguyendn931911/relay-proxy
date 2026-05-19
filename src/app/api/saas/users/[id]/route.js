@@ -116,5 +116,13 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ ok: true, action: "trial_reset" });
   }
 
+  if (body.action === "set_operator") {
+    await db.run(`UPDATE saas_users SET is_operator = ?, updated_at = NOW() WHERE id = ?`, [
+      Boolean(body.isOperator),
+      id,
+    ]);
+    return NextResponse.json({ ok: true, isOperator: Boolean(body.isOperator) });
+  }
+
   return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }
