@@ -6,8 +6,8 @@ const mocks = vi.hoisted(() => ({
     body,
   })),
   requireSaasUser: vi.fn(),
-  listKeysForUser: vi.fn(),
-  createUserApiKey: vi.fn(),
+  listUserApiKeys: vi.fn(),
+  createApiKeyForUser: vi.fn(),
 }));
 
 vi.mock("next/server", () => ({
@@ -20,9 +20,9 @@ vi.mock("../../src/lib/saas/routeAuth.js", () => ({
   requireSaasUser: mocks.requireSaasUser,
 }));
 
-vi.mock("../../src/lib/localDb.js", () => ({
-  listKeysForUser: mocks.listKeysForUser,
-  createUserApiKey: mocks.createUserApiKey,
+vi.mock("../../src/lib/saas/data/apiKeysData.js", () => ({
+  listUserApiKeys: mocks.listUserApiKeys,
+  createApiKeyForUser: mocks.createApiKeyForUser,
 }));
 
 const keysRoute = await import("../../src/app/api/saas/keys/route.js");
@@ -37,22 +37,22 @@ describe("SaaS keys route scoping", () => {
   });
 
   it("lists keys for the authenticated SaaS user only", async () => {
-    mocks.listKeysForUser.mockResolvedValue([{ id: "key_1" }]);
+    mocks.listUserApiKeys.mockResolvedValue([{ id: "key_1" }]);
 
     const response = await keysRoute.GET();
 
     expect(response.body.keys).toEqual([{ id: "key_1" }]);
-    expect(mocks.listKeysForUser).toHaveBeenCalledWith("user_1");
+    expect(mocks.listUserApiKeys).toHaveBeenCalledWith("user_1");
   });
 
   it("creates keys for the authenticated SaaS user only", async () => {
-    mocks.createUserApiKey.mockResolvedValue({ id: "key_1", key: "sk_user_test" });
+    mocks.createApiKeyForUser.mockResolvedValue({ id: "key_1", key: "sk_user_test" });
     const request = { json: vi.fn().mockResolvedValue({ name: "Default" }) };
 
     const response = await keysRoute.POST(request);
 
     expect(response.status).toBe(201);
-    expect(mocks.createUserApiKey).toHaveBeenCalledWith({
+    expect(mocks.createApiKeyForUser).toHaveBeenCalledWith({
       userId: "user_1",
       name: "Default",
     });
@@ -65,6 +65,6 @@ describe("SaaS keys route scoping", () => {
 
     expect(response.status).toBe(403);
     expect(response.body.error).toBe("Forbidden");
-    expect(mocks.listKeysForUser).not.toHaveBeenCalled();
+    expect(mocks.listUserApiKeys).not.toHaveBeenCalled();
   });
 });
