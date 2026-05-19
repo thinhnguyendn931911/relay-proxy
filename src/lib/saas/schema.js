@@ -62,7 +62,7 @@ export const DEFAULT_PLANS = [
     rpm_limit: 10,
     price_cents: 0,
     trial_days: 14,
-    allowed_model_patterns: ["kr/*", "oc/*", "vertex/*"],
+    allowed_model_patterns: [],
     stripe_price_id: null,
   },
   {

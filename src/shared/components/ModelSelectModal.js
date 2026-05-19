@@ -188,6 +188,13 @@ export default function ModelSelectModal({
             const supports = (providerInfo.serviceKinds || ["llm"]).includes(kindFilter);
             if (supports) combined = [{ id: providerId, name: providerInfo.name, value: alias }];
           }
+        } else if (combined.length === 0) {
+          combined = [{
+            id: `__placeholder__${providerId}`,
+            name: `${alias}/model-id`,
+            value: `${alias}/model-id`,
+            isPlaceholder: true,
+          }];
         }
 
         if (combined.length > 0) {
@@ -534,4 +541,3 @@ ModelSelectModal.propTypes = {
   addedModelValues: PropTypes.arrayOf(PropTypes.string),
   closeOnSelect: PropTypes.bool,
 };
-
