@@ -1,0 +1,9 @@
+[Unit]
+Description=Expire overdue trial subscriptions
+
+[Service]
+Type=oneshot
+User=relay
+WorkingDirectory=/opt/relay-proxy
+EnvironmentFile=/opt/relay-proxy/.env
+ExecStart=/usr/bin/node scripts/expire-trials.mjs

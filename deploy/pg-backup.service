@@ -1,0 +1,8 @@
+[Unit]
+Description=Nightly Postgres backup for Relay Proxy
+
+[Service]
+Type=oneshot
+User=relay
+EnvironmentFile=/opt/relay-proxy/.env
+ExecStart=/opt/relay-proxy/scripts/pg-backup.sh
