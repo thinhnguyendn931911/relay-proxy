@@ -59,13 +59,13 @@ export const PROVIDERS = {
     baseUrl: "https://generativelanguage.googleapis.com/v1beta/models",
     format: "gemini",
     clientId: "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com",
-    clientSecret: "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"
+    clientSecret: process.env.GEMINI_OAUTH_CLIENT_SECRET || ""
   },
   "gemini-cli": {
     baseUrl: "https://cloudcode-pa.googleapis.com/v1internal",
     format: "gemini-cli",
     clientId: "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com",
-    clientSecret: "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"
+    clientSecret: process.env.GEMINI_OAUTH_CLIENT_SECRET || ""
   },
   codex: {
     baseUrl: "https://chatgpt.com/backend-api/codex/responses",
@@ -89,7 +89,7 @@ export const PROVIDERS = {
     format: "openai",
     headers: { "User-Agent": "iFlow-Cli" },
     clientId: "10009311001",
-    clientSecret: "4Z3YjXycVsQvyGF1etiNlIBB4RsqSDtW",
+    clientSecret: process.env.IFLOW_OAUTH_CLIENT_SECRET || "",
     tokenUrl: "https://iflow.cn/oauth/token",
     authUrl: "https://iflow.cn/oauth"
   },
@@ -98,7 +98,7 @@ export const PROVIDERS = {
     format: "openai",
     headers: { "User-Agent": "Qoder-Cli" },
     clientId: process.env.QODER_OAUTH_CLIENT_ID || "10009311001",
-    clientSecret: process.env.QODER_OAUTH_CLIENT_SECRET || "4Z3YjXycVsQvyGF1etiNlIBB4RsqSDtW",
+    clientSecret: process.env.QODER_OAUTH_CLIENT_SECRET || "",
     tokenUrl: "https://api.qoder.com/oauth/token",
     authUrl: "https://qoder.com/oauth/authorize"
   },
@@ -110,7 +110,7 @@ export const PROVIDERS = {
     format: "antigravity",
     headers: { "User-Agent": `antigravity/1.107.0 ${platform()}/${arch()}` },
     clientId: "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com",
-    clientSecret: "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"
+    clientSecret: process.env.ANTIGRAVITY_OAUTH_CLIENT_SECRET || ""
   },
   openrouter: {
     baseUrl: "https://openrouter.ai/api/v1/chat/completions",
