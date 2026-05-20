@@ -188,6 +188,7 @@ describe("DB SQLite layer — public API parity", () => {
       provider: "openai", model: "gpt-4", connectionId: "c1",
       tokens: { prompt_tokens: 200, completion_tokens: 100 },
       endpoint: "/v1/chat/completions", status: "ok",
+      rtkStats: { bytesBefore: 1200, bytesAfter: 400, hits: [{ filter: "git-diff", saved: 800 }] },
     });
 
     const hist = await sqliteDb.getUsageHistory({ provider: "openai" });
@@ -199,6 +200,10 @@ describe("DB SQLite layer — public API parity", () => {
     expect(stats.byProvider.openai).toBeDefined();
     expect(stats.byProvider.openai.requests).toBeGreaterThanOrEqual(2);
     expect(stats.byProvider.openai.promptTokens).toBeGreaterThanOrEqual(300);
+    expect(stats.rtkSession.tokensSaved).toBeGreaterThanOrEqual(200);
+
+    const dailyStats = await sqliteDb.getUsageStats("7d");
+    expect(dailyStats.rtkSession.tokensSaved).toBeGreaterThanOrEqual(200);
   });
 
   it("usage: pending tracking in-memory", () => {

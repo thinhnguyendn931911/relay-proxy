@@ -18,12 +18,14 @@ if (!global._statsEmitter) {
 if (!global._pendingTimers) global._pendingTimers = {};
 if (!global._recentRing) global._recentRing = { items: [], initialized: false };
 if (!global._connectionMapCache) global._connectionMapCache = { map: {}, ts: 0 };
+if (!global._rtkSession) global._rtkSession = createRtkTotals();
 
 const pendingRequests = global._pendingRequests;
 const lastErrorProvider = global._lastErrorProvider;
 const pendingTimers = global._pendingTimers;
 const recentRing = global._recentRing;
 const connCache = global._connectionMapCache;
+const rtkSession = global._rtkSession;
 
 export const statsEmitter = global._statsEmitter;
 
@@ -41,6 +43,60 @@ function addToCounter(target, key, values) {
   if (values.meta) Object.assign(target[key], values.meta);
 }
 
+function createRtkTotals() {
+  return { bytesBefore: 0, bytesAfter: 0, bytesSaved: 0, tokensSaved: 0, hits: 0, byFilter: {} };
+}
+
+function normalizeRtkStats(rtkStats) {
+  if (!rtkStats || typeof rtkStats !== "object") return null;
+  const bytesBefore = Number(rtkStats.bytesBefore || 0);
+  const bytesAfter = Number(rtkStats.bytesAfter || 0);
+  const bytesSaved = Math.max(0, bytesBefore - bytesAfter);
+  const hits = Array.isArray(rtkStats.hits) ? rtkStats.hits : [];
+  const hitCount = Array.isArray(rtkStats.hits) ? hits.length : Number(rtkStats.hits || 0);
+  if (bytesSaved === 0 && hitCount === 0) return null;
+
+  const byFilter = rtkStats.byFilter && typeof rtkStats.byFilter === "object" ? { ...rtkStats.byFilter } : {};
+  if (hits.length > 0) {
+    for (const hit of hits) {
+      const filter = hit?.filter || "unknown";
+      if (!byFilter[filter]) byFilter[filter] = { hits: 0, bytesSaved: 0, tokensSaved: 0 };
+      const saved = Math.max(0, Number(hit?.saved || 0));
+      byFilter[filter].hits += 1;
+      byFilter[filter].bytesSaved += saved;
+      byFilter[filter].tokensSaved += Math.round(saved / 4);
+    }
+  }
+
+  return {
+    bytesBefore,
+    bytesAfter,
+    bytesSaved,
+    tokensSaved: Number(rtkStats.tokensSaved || 0) || Math.round(bytesSaved / 4),
+    hits: hitCount,
+    byFilter
+  };
+}
+
+function addRtkStats(target, rtkStats) {
+  const stats = normalizeRtkStats(rtkStats);
+  if (!stats) return;
+
+  target.bytesBefore = (target.bytesBefore || 0) + stats.bytesBefore;
+  target.bytesAfter = (target.bytesAfter || 0) + stats.bytesAfter;
+  target.bytesSaved = (target.bytesSaved || 0) + stats.bytesSaved;
+  target.tokensSaved = (target.tokensSaved || 0) + stats.tokensSaved;
+  target.hits = (target.hits || 0) + stats.hits;
+  target.byFilter ||= {};
+
+  for (const [filter, values] of Object.entries(stats.byFilter || {})) {
+    if (!target.byFilter[filter]) target.byFilter[filter] = { hits: 0, bytesSaved: 0, tokensSaved: 0 };
+    target.byFilter[filter].hits += values.hits || 0;
+    target.byFilter[filter].bytesSaved += values.bytesSaved || 0;
+    target.byFilter[filter].tokensSaved += values.tokensSaved || 0;
+  }
+}
+
 function aggregateEntryToDay(day, entry) {
   const promptTokens = entry.tokens?.prompt_tokens || entry.tokens?.input_tokens || 0;
   const completionTokens = entry.tokens?.completion_tokens || entry.tokens?.output_tokens || 0;
@@ -51,6 +107,8 @@ function aggregateEntryToDay(day, entry) {
   day.promptTokens = (day.promptTokens || 0) + promptTokens;
   day.completionTokens = (day.completionTokens || 0) + completionTokens;
   day.cost = (day.cost || 0) + cost;
+  day.rtkSession ||= createRtkTotals();
+  addRtkStats(day.rtkSession, entry.rtkStats);
 
   day.byProvider ||= {};
   day.byModel ||= {};
@@ -246,6 +304,7 @@ export async function saveRequestUsage(entry) {
 
     if (!entry.timestamp) entry.timestamp = new Date().toISOString();
     entry.cost = await calculateCost(entry.provider, entry.model, entry.tokens);
+    entry.rtkStats = normalizeRtkStats(entry.rtkStats);
 
     const tokens = entry.tokens || {};
     const promptTokens = tokens.prompt_tokens || tokens.input_tokens || 0;
@@ -259,7 +318,7 @@ export async function saveRequestUsage(entry) {
           entry.timestamp, entry.provider || null, entry.model || null,
           entry.connectionId || null, entry.apiKey || null, entry.endpoint || null,
           promptTokens, completionTokens, entry.cost || 0, entry.status || "ok",
-          stringifyJson(tokens), stringifyJson({}),
+          stringifyJson(tokens), stringifyJson(entry.rtkStats ? { rtkStats: entry.rtkStats } : {}),
           entry.userId || null,
         ]
       );
@@ -296,6 +355,7 @@ export async function saveRequestUsage(entry) {
     });
 
     pushToRing(entry);
+    addRtkStats(rtkSession, entry.rtkStats);
     statsEmitter.emit("update");
   } catch (e) {
     console.error("Failed to save usage stats:", e);
@@ -383,6 +443,7 @@ export async function getUsageStats(period = "all") {
   const stats = {
     totalRequests: 0,
     totalPromptTokens: 0, totalCompletionTokens: 0, totalCost: 0,
+    rtkSession: createRtkTotals(),
     byProvider: {}, byModel: {}, byAccount: {}, byApiKey: {}, byEndpoint: {},
     last10Minutes: [],
     pending: pendingRequests,
@@ -444,6 +505,7 @@ export async function getUsageStats(period = "all") {
       stats.totalPromptTokens += day.promptTokens || 0;
       stats.totalCompletionTokens += day.completionTokens || 0;
       stats.totalCost += day.cost || 0;
+      addRtkStats(stats.rtkSession, day.rtkSession);
 
       for (const [prov, p] of Object.entries(day.byProvider || {})) {
         if (!stats.byProvider[prov]) stats.byProvider[prov] = { requests: 0, promptTokens: 0, completionTokens: 0, cost: 0 };
@@ -555,12 +617,13 @@ export async function getUsageStats(period = "all") {
       cutoff = new Date(Date.now() - PERIOD_MS["24h"]).toISOString();
     }
     const filtered = await db.all(
-      `SELECT timestamp, provider, model, connectionId, apiKey, endpoint, promptTokens, completionTokens, cost, tokens FROM usageHistory WHERE timestamp >= ?`,
+      `SELECT timestamp, provider, model, connectionId, apiKey, endpoint, promptTokens, completionTokens, cost, tokens, meta FROM usageHistory WHERE timestamp >= ?`,
       [cutoff]
     );
 
     for (const r of filtered) {
       const tokens = parseJson(r.tokens, {}) || {};
+      const meta = parseJson(r.meta, {}) || {};
       const promptTokens = tokens.prompt_tokens || 0;
       const completionTokens = tokens.completion_tokens || 0;
       const entryCost = r.cost || 0;
@@ -569,6 +632,7 @@ export async function getUsageStats(period = "all") {
       stats.totalPromptTokens += promptTokens;
       stats.totalCompletionTokens += completionTokens;
       stats.totalCost += entryCost;
+      addRtkStats(stats.rtkSession, meta.rtkStats);
 
       if (!stats.byProvider[r.provider]) stats.byProvider[r.provider] = { requests: 0, promptTokens: 0, completionTokens: 0, cost: 0 };
       stats.byProvider[r.provider].requests++;
