@@ -63,6 +63,9 @@ async function clerkProxy(auth, request) {
     const user = await getRoleUser(authState);
 
     if (!user) {
+      if (request.nextUrl.pathname.startsWith("/app")) {
+        return NextResponse.next();
+      }
       if (isApiRoute(request.nextUrl.pathname)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }

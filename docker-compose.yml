@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: relay
+      POSTGRES_PASSWORD: relay
+      POSTGRES_DB: relay_test
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U relay -d relay_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_c21pbGluZy1tYXJ0aW4tOTIuY2xlcmsuYWNjb3VudHMuZGV2JA
+        NEXT_PUBLIC_APP_NAME: Relay AI
+        NEXT_PUBLIC_ENDPOINT_BASE_URL: http://localhost:20129/v1
+        NEXT_PUBLIC_BASE_URL: http://localhost:20129
+        NEXT_PUBLIC_CLOUD_URL: http://localhost:20129
+    ports:
+      - "20129:20128"
+    env_file: .env.test
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - appdata:/app/data
+
+volumes:
+  pgdata:
+  appdata:
