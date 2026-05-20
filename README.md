@@ -1,80 +1,75 @@
 <div align="center">
-  <img src="./images/9router.png?1" alt="9Router Dashboard" width="800"/>
+  <img src="./images/relay-ai.png?1" alt="Relay AI Dashboard" width="800"/>
   
-  # 9Router - SaaS AI Gateway & Token Saver
+  # Relay AI - SaaS AI Gateway & Token Saver
   
   **Run a hosted AI gateway for coding teams: user API keys, plan quotas, Stripe billing, operator controls, RTK token savings, and provider fallback.**
   
   **Connect Claude Code, Cursor, Antigravity, Copilot, Codex, Gemini, OpenCode, Cline, OpenClaw, and other OpenAI-compatible tools to 40+ AI providers and 100+ models.**
   
-  [![npm](https://img.shields.io/npm/v/9router.svg)](https://www.npmjs.com/package/9router)
-  [![Downloads](https://img.shields.io/npm/dm/9router.svg)](https://www.npmjs.com/package/9router)
-  [![Docker Pulls](https://img.shields.io/docker/pulls/decolua/9router.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/decolua/9router)
-  [![GHCR](https://img.shields.io/badge/GHCR-decolua%2F9router-blue?logo=github)](https://github.com/decolua/9router/pkgs/container/9router)
-  [![License](https://img.shields.io/npm/l/9router.svg)](https://github.com/decolua/9router/blob/main/LICENSE)
+  [![Docker Pulls](https://img.shields.io/docker/pulls/decolua/relay-proxy.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/decolua/relay-proxy)
+  [![License](https://img.shields.io/github/license/thinhnguyendn931911/relay-proxy.svg)](https://github.com/thinhnguyendn931911/relay-proxy/blob/main/LICENSE)
 
-  <a href="https://trendshift.io/repositories/22628" target="_blank"><img src="https://trendshift.io/api/badge/repositories/22628" alt="decolua%2F9router | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-  
-  [🚀 Quick Start](#-quick-start) • [💼 SaaS Product](#-saas-product) • [💡 Features](#-key-features) • [📖 Setup](#-setup-guide) • [🌐 Website](https://9router.com)
+  [Quick Start](#-quick-start) | [SaaS Product](#-saas-product) | [Features](#-key-features) | [Setup](#-setup-guide)
 
-  [🇻🇳 Tiếng Việt](./i18n/README.vi.md) • [🇨🇳 中文](./i18n/README.zh-CN.md) • [🇯🇵 日本語](./i18n/README.ja-JP.md)
+  [Tieng Viet](./i18n/README.vi.md) | [Chinese](./i18n/README.zh-CN.md) | [Japanese](./i18n/README.ja-JP.md)
 </div>
 
 ---
 
-## 🤔 Why 9Router?
+## Why Relay AI?
 
 **Ship an AI gateway people can actually use, pay for, and operate:**
 
-- ❌ Teams need one endpoint for many AI coding tools
-- ❌ Subscription quotas, API keys, and model access get hard to manage
-- ❌ Tool outputs (`git diff`, `grep`, `ls`...) burn tokens fast
-- ❌ Public deployments need sign-in, user-scoped keys, quotas, and billing
-- ❌ Operators need visibility into users, plans, usage, and abuse controls
+- Teams need one endpoint for many AI coding tools
+- Subscription quotas, API keys, and model access get hard to manage
+- Tool outputs (`git diff`, `grep`, `ls`...) burn tokens fast
+- Public deployments need sign-in, user-scoped keys, quotas, and billing
+- Operators need visibility into users, plans, usage, and abuse controls
 
-**9Router solves this:**
+**Relay AI solves this:**
 
-- ✅ **SaaS-ready gateway** - Clerk auth, per-user API keys, plan quotas, RPM limits, and Stripe billing
-- ✅ **RTK Token Saver** - Auto-compress tool_result content and save 20-40% tokens per request
-- ✅ **Smart routing** - Subscription → Cheap → Free fallback with provider quota tracking
-- ✅ **Operator control** - Manage users, plans, usage, suspension, trials, and production operations
-- ✅ **Universal endpoint** - OpenAI-compatible API for Claude Code, Codex, Cursor, Cline, and more
+- **SaaS-ready gateway** - Clerk auth, per-user API keys, plan quotas, RPM limits, and Stripe billing
+- **RTK Token Saver** - Auto-compress tool_result content and save 20-40% tokens per request
+- **Smart routing** - Subscription -> Cheap -> Free fallback with provider quota tracking
+- **Operator control** - Manage users, plans, usage, suspension, trials, and production operations
+- **Universal endpoint** - OpenAI-compatible API for Claude Code, Codex, Cursor, Cline, and more
 
 ---
 
-## 🔄 How It Works
+## How It Works
 
 ```
-┌─────────────┐
-│  Your CLI   │  (Claude Code, Codex, OpenClaw, Cursor, Cline...)
-│   Tool      │
-└──────┬──────┘
-       │ http://localhost:20128/v1
-       ↓
-┌─────────────────────────────────────────────┐
-│       9Router SaaS Gateway / Smart Router   │
-│  • Clerk auth + user-scoped API keys        │
-│  • Plans, quotas, RPM limits, Stripe billing│
-│  • RTK Token Saver (cut tool_result tokens) │
-│  • Format translation (OpenAI ↔ Claude)     │
-│  • User and provider quota tracking         │
-│  • Auto token refresh                       │
-└──────┬──────────────────────────────────────┘
-       │
-       ├─→ [Tier 1: SUBSCRIPTION] Claude Code, Codex, GitHub Copilot
-       │   ↓ quota exhausted
-       ├─→ [Tier 2: CHEAP] GLM ($0.6/1M), MiniMax ($0.2/1M)
-       │   ↓ budget limit
-       └─→ [Tier 3: FREE] Kiro, OpenCode Free, Vertex ($300 credits)
++--------------+
+|  Your CLI    |  (Claude Code, Codex, OpenClaw, Cursor, Cline...)
+|   Tool       |
++------+-------+
+       | http://localhost:20128/v1
+       v
++---------------------------------------------+
+|       Relay AI SaaS Gateway / Smart Router  |
+|  * Clerk auth + user-scoped API keys        |
+|  * Plans, quotas, RPM limits, Stripe billing|
+|  * RTK Token Saver (cut tool_result tokens) |
+|  * Format translation (OpenAI <-> Claude)   |
+|  * User and provider quota tracking         |
+|  * Auto token refresh                       |
++------+--------------------------------------+
+       |
+       +--> [Tier 1: SUBSCRIPTION] Claude Code, Codex, GitHub Copilot
+       |    v quota exhausted
+       +--> [Tier 2: CHEAP] GLM ($0.6/1M), MiniMax ($0.2/1M)
+       |    v budget limit
+       +--> [Tier 3: FREE] Kiro, OpenCode Free, Vertex ($300 credits)
 
 Result: Never stop coding, minimal cost + 20-40% token savings via RTK
 ```
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
-Choose the path that matches how you want to run 9Router.
+Choose the path that matches how you want to run Relay AI.
 
 ### Hosted SaaS user
 
@@ -83,7 +78,7 @@ Choose the path that matches how you want to run 9Router.
 Open your deployment and sign in with Clerk:
 
 ```
-https://your-9router-domain.com/sign-in
+https://your-domain.com/sign-in
 ```
 
 **2. Create a user API key**
@@ -94,7 +89,7 @@ Go to `/app/keys`, create a user-scoped `sk_user_...` key, and copy it once.
 
 ```
 Claude Code/Codex/OpenClaw/Cursor/Cline Settings:
-  Endpoint: https://your-9router-domain.com/v1
+  Endpoint: https://your-domain.com/v1
   API Key: sk_user_...
   Model: kr/claude-sonnet-4.5
 ```
@@ -117,19 +112,6 @@ Default local URLs:
 
 Local development can use SQLite fallback. Hosted SaaS deployments should use Postgres, Clerk, and Stripe.
 
-### Local package install
-
-The public package can still run a local gateway:
-
-```bash
-npm install -g 9router
-9router
-```
-
-🎉 Dashboard opens at `http://localhost:20128`
-
-Connect providers, generate an API key, and point your local tool at `http://localhost:20128/v1`.
-
 ### Production
 
 ```bash
@@ -142,9 +124,9 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
 
 ---
 
-## 💼 SaaS Product
+## SaaS Product
 
-9Router can run as a hosted SaaS gateway in front of your provider accounts and model routing rules.
+Relay AI can run as a hosted SaaS gateway in front of your provider accounts and model routing rules.
 
 | Area | Capability |
 |------|------------|
@@ -184,24 +166,24 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
   <tr>
     <td align="center" width="320">
       <a href="https://www.youtube.com/watch?v=raEyZPg5xE0">
-        <img src="https://img.youtube.com/vi/raEyZPg5xE0/maxresdefault.jpg" alt="9Router Setup Tutorial" width="300"/>
+        <img src="https://img.youtube.com/vi/raEyZPg5xE0/maxresdefault.jpg" alt="Relay AI Setup Tutorial" width="300"/>
       </a><br/>
-      <b>🇺🇸 English</b><br/>
-      <sub>9Router + Claude Code FREE Setup<br/>by <a href="https://www.youtube.com/@BuildAIWithHamid">Build AI With Hamid</a></sub>
+      <b>English</b><br/>
+      <sub>Relay AI + Claude Code FREE Setup<br/>by <a href="https://www.youtube.com/@BuildAIWithHamid">Build AI With Hamid</a></sub>
     </td>
     <td align="center" width="320">
       <a href="https://www.youtube.com/watch?v=X69n5Lm06Yw">
-        <img src="https://img.youtube.com/vi/X69n5Lm06Yw/maxresdefault.jpg" alt="Tiết kiệm chi phí LLM với 9Router" width="300"/>
+        <img src="https://img.youtube.com/vi/X69n5Lm06Yw/maxresdefault.jpg" alt="Save LLM costs with Relay AI" width="300"/>
       </a><br/>
-      <b>🇻🇳 Tiếng Việt</b><br/>
-      <sub>Tiết kiệm chi phí LLM cho OpenClaw với 9Router<br/>by <a href="https://www.youtube.com/c/M%C3%ACAIblog">Mì AI</a></sub>
+      <b>Tieng Viet</b><br/>
+      <sub>Save LLM costs for OpenClaw with Relay AI<br/>by <a href="https://www.youtube.com/c/M%C3%ACAIblog">Mi AI</a></sub>
     </td>
     <td align="center" width="320">
       <a href="https://www.youtube.com/watch?v=o3qYCyjrFYg">
         <img src="https://img.youtube.com/vi/o3qYCyjrFYg/maxresdefault.jpg" alt="Claude Code FREE Forever" width="300"/>
       </a><br/>
-      <b>🇺🇸 English</b><br/>
-      <sub>Claude Code FREE Forever — Unlimited Models<br/>by <a href="https://www.youtube.com/@BuildAIWithHamid">Build AI With Hamid</a></sub>
+      <b>English</b><br/>
+      <sub>Claude Code FREE Forever - Unlimited Models<br/>by <a href="https://www.youtube.com/@BuildAIWithHamid">Build AI With Hamid</a></sub>
     </td>
   </tr>
   <tr>
@@ -209,21 +191,21 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
       <a href="https://www.youtube.com/watch?v=Ttpc26m39Dw">
         <img src="https://img.youtube.com/vi/Ttpc26m39Dw/maxresdefault.jpg" alt="Claude CLI Free Setup" width="300"/>
       </a><br/>
-      <b>🇺🇸 English</b><br/>
-      <sub>Claude CLI Free Setup with 9Router 🚀<br/>by <a href="https://www.youtube.com/@CodeVerseSoban">CodeVerse Soban</a></sub>
+      <b>English</b><br/>
+      <sub>Claude CLI Free Setup with Relay AI<br/>by <a href="https://www.youtube.com/@CodeVerseSoban">CodeVerse Soban</a></sub>
     </td>
     <td align="center" width="320">
       <a href="https://www.youtube.com/watch?v=G-5A_D5Pm6Y">
-        <img src="https://img.youtube.com/vi/G-5A_D5Pm6Y/maxresdefault.jpg" alt="Cài đặt OpenClaw Free A-Z" width="300"/>
+        <img src="https://img.youtube.com/vi/G-5A_D5Pm6Y/maxresdefault.jpg" alt="Setup OpenClaw Free A-Z" width="300"/>
       </a><br/>
-      <b>🇻🇳 Tiếng Việt</b><br/>
-      <sub>Cài Đặt OpenClaw Free Từ A-Z + 9Router<br/>by <a href="https://www.youtube.com/@maigia">Mai Gia</a></sub>
+      <b>Tieng Viet</b><br/>
+      <sub>Setup OpenClaw Free A-Z + Relay AI<br/>by <a href="https://www.youtube.com/@maigia">Mai Gia</a></sub>
     </td>
     <td align="center" width="320">
       <a href="https://www.youtube.com/watch?v=JXmg8_gccgE">
         <img src="https://img.youtube.com/vi/JXmg8_gccgE/maxresdefault.jpg" alt="FREE OpenClaw with Claude Opus" width="300"/>
       </a><br/>
-      <b>🇺🇸 English</b><br/>
+      <b>English</b><br/>
       <sub>FREE OpenClaw + Claude Opus 4.6<br/>by <a href="https://www.youtube.com/@BuildAIWithHamid">Build AI With Hamid</a></sub>
     </td>
   </tr>
@@ -231,13 +213,13 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
 
 </div>
 
-> 🎬 **Made a video about 9Router?** Submit a [Pull Request](https://github.com/decolua/9router/pulls) adding your video to this section — we'll merge it!
+> **Made a video about Relay AI?** Submit a [Pull Request](https://github.com/thinhnguyendn931911/relay-proxy/pulls) adding your video to this section!
 
 ---
 
-## 🛠️ Supported CLI Tools
+## Supported CLI Tools
 
-9Router works seamlessly with all major AI coding tools:
+Relay AI works seamlessly with all major AI coding tools:
 
 <div align="center">
   <table>
@@ -298,9 +280,9 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
 
 ---
 
-## 🌐 Supported Providers
+## Supported Providers
 
-### 🔐 OAuth Providers
+### OAuth Providers
 
 <div align="center">
   <table>
@@ -329,7 +311,7 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
   </table>
 </div>
 
-### 🆓 Free Providers
+### Free Providers
 
 <div align="center">
   <table>
@@ -342,7 +324,7 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
       <td align="center" width="150">
         <img src="./public/providers/opencode.png" width="70" alt="OpenCode Free"/><br/>
         <b>OpenCode Free</b><br/>
-        <sub>No auth • Auto-fetch models<br/>Unlimited FREE</sub>
+        <sub>No auth - Auto-fetch models<br/>Unlimited FREE</sub>
       </td>
       <td align="center" width="150">
         <img src="./public/providers/gemini.png" width="70" alt="Vertex AI"/><br/>
@@ -355,7 +337,7 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
 
 > **Note:** iFlow, Qwen and Gemini CLI free tiers were discontinued in 2026. Use Kiro / OpenCode Free / Vertex instead.
 
-### 🔑 API Key Providers (40+)
+### API Key Providers (40+)
 
 <div align="center">
   <table>
@@ -443,42 +425,42 @@ For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secre
 
 ---
 
-## 💡 Key Features
+## Key Features
 
 | Feature | What It Does | Why It Matters |
 |---------|--------------|----------------|
-| 🚀 **RTK Token Saver** ([RTK](https://github.com/rtk-ai/rtk) ⭐40K) | Compress tool outputs (`git diff`, `grep`, `ls`, `tree`...) before sending to LLM | Save **20-40% input tokens** per request |
-| 🪨 **Caveman Mode** ([Caveman](https://github.com/JuliusBrussee/caveman) ⭐52K) | Inject caveman-speak prompt → LLM replies terse, technical substance preserved | Save **up to 65% output tokens** |
-| 🎯 **Smart 3-Tier Fallback** | Auto-route: Subscription → Cheap → Free | Never stop coding, zero downtime |
-| 📊 **Real-Time Quota Tracking** | Live token count + reset countdown | Maximize subscription value |
-| 🔄 **Format Translation** | OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex | Works with any CLI tool |
-| 👥 **Multi-Account Support** | Multiple accounts per provider | Load balancing + redundancy |
-| 🔄 **Auto Token Refresh** | OAuth tokens refresh automatically | No manual re-login needed |
-| 🎨 **Custom Combos** | Create unlimited model combinations | Tailor fallback to your needs |
-| 📝 **Request Logging** | Debug mode with full request/response logs | Troubleshoot issues easily |
-| 💾 **Cloud Sync** | Sync config across devices | Same setup everywhere |
-| 📊 **Usage Analytics** | Track tokens, cost, trends over time | Optimize spending |
-| 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Flexible deployment options |
+| **RTK Token Saver** ([RTK](https://github.com/rtk-ai/rtk)) | Compress tool outputs (`git diff`, `grep`, `ls`, `tree`...) before sending to LLM | Save **20-40% input tokens** per request |
+| **Caveman Mode** ([Caveman](https://github.com/JuliusBrussee/caveman)) | Inject caveman-speak prompt, LLM replies terse, technical substance preserved | Save **up to 65% output tokens** |
+| **Smart 3-Tier Fallback** | Auto-route: Subscription -> Cheap -> Free | Never stop coding, zero downtime |
+| **Real-Time Quota Tracking** | Live token count + reset countdown | Maximize subscription value |
+| **Format Translation** | OpenAI <-> Claude <-> Gemini <-> Cursor <-> Kiro <-> Vertex | Works with any CLI tool |
+| **Multi-Account Support** | Multiple accounts per provider | Load balancing + redundancy |
+| **Auto Token Refresh** | OAuth tokens refresh automatically | No manual re-login needed |
+| **Custom Combos** | Create unlimited model combinations | Tailor fallback to your needs |
+| **Request Logging** | Debug mode with full request/response logs | Troubleshoot issues easily |
+| **Cloud Sync** | Sync config across devices | Same setup everywhere |
+| **Usage Analytics** | Track tokens, cost, trends over time | Optimize spending |
+| **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Flexible deployment options |
 
 <details>
-<summary><b>📖 Feature Details</b></summary>
+<summary><b>Feature Details</b></summary>
 
-### 🚀 RTK Token Saver
+### RTK Token Saver
 
 Tool outputs (`git diff`, `grep`, `find`, `ls`, `tree`, log dumps...) often eat 30-50% of your prompt budget. RTK detects them and applies smart, lossless compression **before** the request hits the LLM:
 
 - **Filters:** `git-diff`, `git-status`, `grep`, `find`, `ls`, `tree`, `dedup-log`, `smart-truncate`, `read-numbered`, `search-list`
-- **Auto-detect:** No config needed — RTK peeks the first 1KB of each `tool_result` and picks the right filter.
+- **Auto-detect:** No config needed - RTK peeks the first 1KB of each `tool_result` and picks the right filter.
 - **Safe by design:** If a filter fails, throws, or makes output bigger, RTK silently keeps the original text. Errors never break your request.
 - **Universal:** Works across all formats (OpenAI, Claude, Gemini, Cursor, Kiro, OpenAI Responses) because it runs **before** any format translation.
-- **Default ON:** Toggle anytime in Dashboard → Endpoint settings.
+- **Default ON:** Toggle anytime in Dashboard -> Endpoint settings.
 
 ```
 Without RTK: 47K tokens sent to LLM
-With RTK:    28K tokens sent to LLM   (40% saved · same context · same answer)
+With RTK:    28K tokens sent to LLM   (40% saved - same context - same answer)
 ```
 
-### 🎯 Smart 3-Tier Fallback
+### Smart 3-Tier Fallback
 
 Create combos with automatic fallback:
 
@@ -488,50 +470,50 @@ Combo: "my-coding-stack"
   2. glm/glm-4.7               (cheap backup, $0.6/1M)
   3. if/kimi-k2-thinking       (free fallback)
 
-→ Auto switches when quota runs out or errors occur
+-> Auto switches when quota runs out or errors occur
 ```
 
-### 📊 Real-Time Quota Tracking
+### Real-Time Quota Tracking
 
 - Token consumption per provider
 - Reset countdown (5-hour, daily, weekly)
 - Cost estimation for paid tiers
 - Monthly spending reports
 
-### 🔄 Format Translation
+### Format Translation
 
 Seamless translation between formats:
-- **OpenAI** ↔ **Claude** ↔ **Gemini** ↔ **Cursor** ↔ **Kiro** ↔ **Vertex** ↔ **Antigravity** ↔ **Ollama** ↔ **OpenAI Responses**
-- Your CLI tool sends OpenAI format → 9Router translates → Provider receives native format
+- **OpenAI** <-> **Claude** <-> **Gemini** <-> **Cursor** <-> **Kiro** <-> **Vertex** <-> **Antigravity** <-> **Ollama** <-> **OpenAI Responses**
+- Your CLI tool sends OpenAI format -> Relay AI translates -> Provider receives native format
 - Works with any tool that supports custom OpenAI endpoints
 
-### 👥 Multi-Account Support
+### Multi-Account Support
 
 - Add multiple accounts per provider
 - Auto round-robin or priority-based routing
 - Fallback to next account when one hits quota
 
-### 🔄 Auto Token Refresh
+### Auto Token Refresh
 
 - OAuth tokens automatically refresh before expiration
 - No manual re-authentication needed
 - Seamless experience across all providers
 
-### 🎨 Custom Combos
+### Custom Combos
 
 - Create unlimited model combinations
 - Mix subscription, cheap, and free tiers
 - Name your combos for easy access
 - Share combos across devices with Cloud Sync
 
-### 📝 Request Logging
+### Request Logging
 
 - Enable debug mode for full request/response logs
 - Track API calls, headers, and payloads
 - Troubleshoot integration issues
 - Export logs for analysis
 
-### 💾 Cloud Sync
+### Cloud Sync
 
 - Sync providers, combos, and settings across devices
 - Automatic background sync
@@ -546,14 +528,14 @@ Seamless translation between formats:
 - `NEXT_PUBLIC_BASE_URL` and `NEXT_PUBLIC_CLOUD_URL` are still supported for compatibility/UI, but server runtime now prioritizes `BASE_URL`/`CLOUD_URL`.
 - Cloud sync requests now use timeout + fail-fast behavior to avoid UI hanging when cloud DNS/network is unavailable.
 
-### 📊 Usage Analytics
+### Usage Analytics
 
 - Track token usage per provider and model
 - Cost estimation and spending trends
 - Monthly reports and insights
 - Optimize your AI spending
 
-> **💡 IMPORTANT - Understanding Dashboard Costs:**
+> **IMPORTANT - Understanding Dashboard Costs:**
 > 
 > The provider "cost" displayed in Usage Analytics is **for upstream tracking and comparison**. 
 > SaaS subscription status and invoices are handled separately through Stripe on `/app/plan`.
@@ -563,24 +545,24 @@ Seamless translation between formats:
 > 
 > Think of it as a savings and optimization signal for routing decisions.
 
-### 🌐 Deploy Anywhere
+### Deploy Anywhere
 
-- 💻 **Localhost** - Default, works offline
-- ☁️ **VPS/Cloud** - Share across devices
-- 🐳 **Docker** - One-command deployment
-- 🚀 **Cloudflare Workers** - Global edge network
+- **Localhost** - Default, works offline
+- **VPS/Cloud** - Share across devices
+- **Docker** - One-command deployment
+- **Cloudflare Workers** - Global edge network
 
 </details>
 
 ---
 
-## 💰 Plans, Provider Costs, and Billing
+## Plans, Provider Costs, and Billing
 
-9Router has two cost layers:
+Relay AI has two cost layers:
 
 | Layer | Who manages it | What it covers |
 |-------|----------------|----------------|
-| **SaaS plan** | Your 9Router deployment via Stripe | User access, monthly token quota, RPM limit, model access, checkout, and customer portal |
+| **SaaS plan** | Your Relay AI deployment via Stripe | User access, monthly token quota, RPM limit, model access, checkout, and customer portal |
 | **Provider cost** | The provider account owner | Claude Code, Codex, Copilot, Cursor, GLM, MiniMax, Kiro, OpenCode Free, Vertex, and other upstream accounts |
 
 Default SaaS plans are seeded in the database:
@@ -596,24 +578,24 @@ Provider routing still supports the same cost strategy:
 
 | Tier | Provider | Provider Cost | Quota Reset | Best For |
 |------|----------|---------------|-------------|----------|
-| **🚀 TOKEN SAVER** | **RTK (built-in)** | **No upstream cost** | Always on | **Save 20-40% tokens on EVERY request** |
-| **💳 SUBSCRIPTION** | Claude Code, Codex, Copilot, Cursor | Provider subscription | 5h, weekly, or monthly | Already subscribed |
-| **💰 CHEAP** | GLM-5.1 / GLM-4.7, MiniMax, Kimi | Low provider/API cost | Daily, rolling, or monthly | Budget backup |
-| **🆓 FREE** | Kiro AI, OpenCode Free, Vertex credits | Provider free tier/credits | Provider-defined | Emergency fallback and low-cost onboarding |
+| **TOKEN SAVER** | **RTK (built-in)** | **No upstream cost** | Always on | **Save 20-40% tokens on EVERY request** |
+| **SUBSCRIPTION** | Claude Code, Codex, Copilot, Cursor | Provider subscription | 5h, weekly, or monthly | Already subscribed |
+| **CHEAP** | GLM-5.1 / GLM-4.7, MiniMax, Kimi | Low provider/API cost | Daily, rolling, or monthly | Budget backup |
+| **FREE** | Kiro AI, OpenCode Free, Vertex credits | Provider free tier/credits | Provider-defined | Emergency fallback and low-cost onboarding |
 
-**💡 Pro Tip:** RTK + Kiro AI + OpenCode Free can reduce upstream provider cost while the SaaS layer still enforces user plans, quotas, and billing.
+**Pro Tip:** RTK + Kiro AI + OpenCode Free can reduce upstream provider cost while the SaaS layer still enforces user plans, quotas, and billing.
 
 ---
 
-### 📊 Understanding Costs and Billing
+### Understanding Costs and Billing
 
 **Hosted SaaS billing:**
 
-✅ Users upgrade through Stripe Checkout from `/app/plan`  
-✅ Paid users manage subscriptions through Stripe Customer Portal  
-✅ Stripe webhooks sync active, canceled, and past-due subscription status  
-✅ Plan quotas and RPM limits are enforced before provider routing  
-✅ Operators can edit plan limits and model access from `/dashboard/plans`
+- Users upgrade through Stripe Checkout from `/app/plan`  
+- Paid users manage subscriptions through Stripe Customer Portal  
+- Stripe webhooks sync active, canceled, and past-due subscription status  
+- Plan quotas and RPM limits are enforced before provider routing  
+- Operators can edit plan limits and model access from `/dashboard/plans`
 
 **Provider cost tracking:**
 
@@ -622,25 +604,25 @@ The dashboard can also show estimated upstream provider costs. Those estimates h
 **Example Scenario:**
 ```
 Dashboard Display:
-• Total Requests: 1,662
-• Total Tokens: 47M
-• Estimated Provider Cost: $290
+- Total Requests: 1,662
+- Total Tokens: 47M
+- Estimated Provider Cost: $290
 
 Provider Reality Check:
-• Provider: iFlow (FREE unlimited)
-• Actual Upstream Provider Payment: $0.00
-• What $290 Means: Approximate provider cost avoided by using free models
+- Provider: iFlow (FREE unlimited)
+- Actual Upstream Provider Payment: $0.00
+- What $290 Means: Approximate provider cost avoided by using free models
 ```
 
 **Payment rules:**
-- **SaaS plan**: Paid through your 9Router deployment's Stripe integration.
+- **SaaS plan**: Paid through your Relay AI deployment's Stripe integration.
 - **Subscription providers**: Paid directly to Claude Code, Codex, Copilot, Cursor, and similar services.
 - **Cheap providers**: Paid directly to providers such as GLM, MiniMax, Kimi, or OpenRouter.
 - **Free providers/credits**: Subject to the provider's current free tier and terms.
 
 ---
 
-## 🎯 Use Cases
+## Use Cases
 
 ### Case 1: "I have Claude Pro subscription"
 
@@ -706,12 +688,12 @@ Access via: WhatsApp, Telegram, Slack, Discord, iMessage, Signal...
 
 ---
 
-## ❓ Frequently Asked Questions
+## Frequently Asked Questions
 
 <details>
-<summary><b>📊 Why does my dashboard show high costs?</b></summary>
+<summary><b>Why does my dashboard show high costs?</b></summary>
 
-The dashboard tracks token usage and can display **estimated upstream provider costs**. These estimates are separate from your 9Router SaaS plan and help show what routing, RTK compression, free providers, or existing subscriptions are saving.
+The dashboard tracks token usage and can display **estimated upstream provider costs**. These estimates are separate from your Relay AI SaaS plan and help show what routing, RTK compression, free providers, or existing subscriptions are saving.
 
 **Example:**
 - **Dashboard shows:** "$290 estimated provider cost"
@@ -724,9 +706,9 @@ The cost display is an analytics and savings signal. Your SaaS plan status, quot
 </details>
 
 <details>
-<summary><b>💳 How does SaaS billing work?</b></summary>
+<summary><b>How does SaaS billing work?</b></summary>
 
-Hosted 9Router deployments use Stripe for paid plans.
+Hosted Relay AI deployments use Stripe for paid plans.
 
 **Users can:**
 - Start on the seeded free trial plan
@@ -743,7 +725,7 @@ Hosted 9Router deployments use Stripe for paid plans.
 </details>
 
 <details>
-<summary><b>🆓 Are FREE providers really unlimited?</b></summary>
+<summary><b>Are FREE providers really unlimited?</b></summary>
 
 **Yes!** The current FREE providers (Kiro, OpenCode Free, Vertex) are genuinely free with **no hidden charges**.
 
@@ -752,17 +734,17 @@ These are free services offered by those respective companies:
 - **OpenCode Free**: No-auth passthrough proxy, models auto-fetched from `opencode.ai/zen/v1/models`
 - **Vertex AI**: $300 free credits for new Google Cloud accounts (90 days)
 
-9Router routes requests to these providers and makes them easy to use with fallback support. Free provider availability is controlled by each provider, while your hosted 9Router plan and quota are controlled by the SaaS deployment.
+Relay AI routes requests to these providers and makes them easy to use with fallback support. Free provider availability is controlled by each provider, while your hosted Relay AI plan and quota are controlled by the SaaS deployment.
 
 **Discontinued free tiers (no longer recommended):**
-- ❌ **iFlow**: Was free unlimited, now changed to paid (2026)
-- ❌ **Qwen Code**: Free OAuth tier discontinued by Alibaba on 2026-04-15
-- ❌ **Gemini CLI**: Still works, but using it with non-CLI tools (Claude, Codex, Cursor...) may result in account bans — only use if you stick to Gemini CLI itself
+- **iFlow**: Was free unlimited, now changed to paid (2026)
+- **Qwen Code**: Free OAuth tier discontinued by Alibaba on 2026-04-15
+- **Gemini CLI**: Still works, but using it with non-CLI tools (Claude, Codex, Cursor...) may result in account bans - only use if you stick to Gemini CLI itself
 
 </details>
 
 <details>
-<summary><b>💰 How do I minimize my actual AI costs?</b></summary>
+<summary><b>How do I minimize my actual AI costs?</b></summary>
 
 **Free-First Strategy:**
 
@@ -782,45 +764,45 @@ These are free services offered by those respective companies:
 
 3. **Use subscription providers last:**
    - Only if you already have them
-   - 9Router helps maximize their value through quota tracking
+   - Relay AI helps maximize their value through quota tracking
 
 **Result:** Many users can minimize upstream provider spend while the SaaS plan still governs account access, monthly quota, and rate limits.
 
 </details>
 
 <details>
-<summary><b>📈 What if my usage suddenly spikes?</b></summary>
+<summary><b>What if my usage suddenly spikes?</b></summary>
 
-9Router's smart fallback prevents surprise charges:
+Relay AI's smart fallback prevents surprise charges:
 
 **Scenario:** You're on a coding sprint and blow through your quotas
 
-**Without 9Router:**
-- ❌ Hit rate limit → Work stops → Frustration
-- ❌ Or: Accidentally rack up huge API bills
+**Without Relay AI:**
+- Hit rate limit -> Work stops -> Frustration
+- Or: Accidentally rack up huge API bills
 
-**With 9Router:**
-- ✅ Subscription hits limit → Auto-fallback to cheap tier
-- ✅ Cheap tier gets expensive → Auto-fallback to free tier
-- ✅ Never stop coding → Predictable costs
+**With Relay AI:**
+- Subscription hits limit -> Auto-fallback to cheap tier
+- Cheap tier gets expensive -> Auto-fallback to free tier
+- Never stop coding -> Predictable costs
 
-**You're in control:** Set spending limits per provider in dashboard, and 9Router respects them.
+**You're in control:** Set spending limits per provider in dashboard, and Relay AI respects them.
 
 </details>
 
 ---
 
-## 📖 Setup Guide
+## Setup Guide
 
 <details>
-<summary><b>🔐 Subscription Providers (Maximize Value)</b></summary>
+<summary><b>Subscription Providers (Maximize Value)</b></summary>
 
 ### Claude Code (Pro/Max)
 
 ```bash
-Dashboard → Providers → Connect Claude Code
-→ OAuth login → Auto token refresh
-→ 5-hour + weekly quota tracking
+Dashboard -> Providers -> Connect Claude Code
+-> OAuth login -> Auto token refresh
+-> 5-hour + weekly quota tracking
 
 Models:
   cc/claude-opus-4-7
@@ -829,14 +811,14 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Pro Tip:** Use Opus for complex tasks, Sonnet for speed. 9Router tracks quota per model!
+**Pro Tip:** Use Opus for complex tasks, Sonnet for speed. Relay AI tracks quota per model!
 
 ### OpenAI Codex (Plus/Pro)
 
 ```bash
-Dashboard → Providers → Connect Codex
-→ OAuth login (port 1455)
-→ 5-hour + weekly reset
+Dashboard -> Providers -> Connect Codex
+-> OAuth login (port 1455)
+-> 5-hour + weekly reset
 
 Models:
   cx/gpt-5.5
@@ -848,9 +830,9 @@ Models:
 ### GitHub Copilot
 
 ```bash
-Dashboard → Providers → Connect GitHub
-→ OAuth via GitHub
-→ Monthly reset (1st of month)
+Dashboard -> Providers -> Connect GitHub
+-> OAuth via GitHub
+-> Monthly reset (1st of month)
 
 Models:
   gh/gpt-5.4
@@ -863,9 +845,9 @@ Models:
 ### Cursor IDE
 
 ```bash
-Dashboard → Providers → Connect Cursor
-→ OAuth login
-→ Monthly subscription
+Dashboard -> Providers -> Connect Cursor
+-> OAuth login
+-> Monthly subscription
 
 Models:
   cu/claude-4.6-opus-max
@@ -876,25 +858,25 @@ Models:
 </details>
 
 <details>
-<summary><b>💰 Cheap Providers (Backup)</b></summary>
+<summary><b>Cheap Providers (Backup)</b></summary>
 
 ### GLM-5.1 / GLM-4.7 (Daily reset, $0.6/1M)
 
 1. Sign up: [Zhipu AI](https://open.bigmodel.cn/)
 2. Get API key from Coding Plan
-3. Dashboard → Add API Key:
+3. Dashboard -> Add API Key:
    - Provider: `glm`
    - API Key: `your-key`
 
 **Use:** `glm/glm-5.1`, `glm/glm-5`, `glm/glm-4.7`
 
-**Pro Tip:** Coding Plan offers 3× quota at 1/7 cost! Reset daily 10:00 AM.
+**Pro Tip:** Coding Plan offers 3x quota at 1/7 cost! Reset daily 10:00 AM.
 
 ### MiniMax M2.7 (5h reset, $0.20/1M)
 
 1. Sign up: [MiniMax](https://www.minimax.io/)
 2. Get API key
-3. Dashboard → Add API Key
+3. Dashboard -> Add API Key
 
 **Use:** `minimax/MiniMax-M2.7`, `minimax/MiniMax-M2.5`
 
@@ -904,7 +886,7 @@ Models:
 
 1. Subscribe: [Moonshot AI](https://platform.moonshot.ai/)
 2. Get API key
-3. Dashboard → Add API Key
+3. Dashboard -> Add API Key
 
 **Use:** `kimi/kimi-k2.5`, `kimi/kimi-k2.5-thinking`
 
@@ -913,14 +895,14 @@ Models:
 </details>
 
 <details>
-<summary><b>🆓 FREE Providers (Recommended)</b></summary>
+<summary><b>FREE Providers (Recommended)</b></summary>
 
 ### Kiro AI (Claude 4.5 + GLM-5 + MiniMax FREE)
 
 ```bash
-Dashboard → Connect Kiro
-→ AWS Builder ID, AWS IAM Identity Center, Google, or GitHub
-→ Unlimited usage
+Dashboard -> Connect Kiro
+-> AWS Builder ID, AWS IAM Identity Center, Google, or GitHub
+-> Unlimited usage
 
 Models:
   kr/claude-sonnet-4.5
@@ -936,9 +918,9 @@ Models:
 ### OpenCode Free (No auth, auto-fetch models)
 
 ```bash
-Dashboard → Connect OpenCode Free
-→ No login required (passthrough proxy)
-→ Models auto-fetched from opencode.ai/zen/v1/models
+Dashboard -> Connect OpenCode Free
+-> No login required (passthrough proxy)
+-> Models auto-fetched from opencode.ai/zen/v1/models
 ```
 
 **Pro Tip:** Fastest setup. Just connect and start coding.
@@ -946,9 +928,9 @@ Dashboard → Connect OpenCode Free
 ### Vertex AI ($300 free credits for new GCP accounts)
 
 ```bash
-Dashboard → Connect Vertex AI
-→ Upload Google Cloud Service Account JSON
-→ Enable Vertex AI API in your GCP project
+Dashboard -> Connect Vertex AI
+-> Upload Google Cloud Service Account JSON
+-> Enable Vertex AI API in your GCP project
 
 Models:
   vertex/gemini-3.1-pro-preview
@@ -966,12 +948,12 @@ Vertex Partner (Anthropic / DeepSeek / GLM / Qwen via Vertex):
 </details>
 
 <details>
-<summary><b>🎨 Create Combos</b></summary>
+<summary><b>Create Combos</b></summary>
 
-### Example 1: Maximize Subscription → Cheap Backup
+### Example 1: Maximize Subscription -> Cheap Backup
 
 ```
-Dashboard → Combos → Create New
+Dashboard -> Combos -> Create New
 
 Name: premium-coding
 Models:
@@ -1003,14 +985,14 @@ Cost: $0 forever (+ 20-40% token savings via RTK)!
 </details>
 
 <details>
-<summary><b>🔧 CLI Integration</b></summary>
+<summary><b>CLI Integration</b></summary>
 
 ### Cursor IDE
 
 ```
-Settings → Models → Advanced:
+Settings -> Models -> Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from 9router dashboard]
+  OpenAI API Key: [from Relay AI dashboard]
   Model: cc/claude-opus-4-7
 ```
 
@@ -1023,7 +1005,7 @@ Edit `~/.claude/config.json`:
 ```json
 {
   "anthropic_api_base": "http://localhost:20128/v1",
-  "anthropic_api_key": "your-9router-api-key"
+  "anthropic_api_key": "your-relay-ai-api-key"
 }
 ```
 
@@ -1031,35 +1013,35 @@ Edit `~/.claude/config.json`:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-9router-api-key"
+export OPENAI_API_KEY="your-relay-ai-api-key"
 
 codex "your prompt"
 ```
 
 ### OpenClaw
 
-**Option 1 — Dashboard (recommended):**
+**Option 1 - Dashboard (recommended):**
 
 ```
-Dashboard → CLI Tools → OpenClaw → Select Model → Apply
+Dashboard -> CLI Tools -> OpenClaw -> Select Model -> Apply
 ```
 
-**Option 2 — Manual:** Edit `~/.openclaw/openclaw.json`:
+**Option 2 - Manual:** Edit `~/.openclaw/openclaw.json`:
 
 ```json
 {
   "agents": {
     "defaults": {
       "model": {
-        "primary": "9router/kr/claude-sonnet-4.5"
+        "primary": "relay/kr/claude-sonnet-4.5"
       }
     }
   },
   "models": {
     "providers": {
-      "9router": {
+      "relay": {
         "baseUrl": "http://127.0.0.1:20128/v1",
-        "apiKey": "sk_9router",
+        "apiKey": "sk_relay",
         "api": "openai-completions",
         "models": [
           {
@@ -1073,7 +1055,7 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 }
 ```
 
-> **Note:** OpenClaw only works with local 9Router. Use `127.0.0.1` instead of `localhost` to avoid IPv6 resolution issues.
+> **Note:** OpenClaw only works with local Relay AI. Use `127.0.0.1` instead of `localhost` to avoid IPv6 resolution issues.
 
 ### Cline / Continue / RooCode
 
@@ -1087,13 +1069,13 @@ Model: cc/claude-opus-4-7
 </details>
 
 <details>
-<summary><b>🚀 Deployment and Operations</b></summary>
+<summary><b>Deployment and Operations</b></summary>
 
 ### Local Development
 
 ```bash
-git clone https://github.com/decolua/9router.git
-cd 9router
+git clone https://github.com/thinhnguyendn931911/relay-proxy.git
+cd relay-proxy
 cp .env.example .env
 npm install
 PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
@@ -1119,8 +1101,8 @@ Recommended hosted stack:
 - **Maintenance:** trial-expiration schedule and nightly `pg_dump` backups stored off-box
 
 ```bash
-git clone https://github.com/decolua/9router.git
-cd 9router
+git clone https://github.com/thinhnguyendn931911/relay-proxy.git
+cd relay-proxy
 cp .env.example .env
 npm install
 npm run build
@@ -1138,7 +1120,7 @@ Process manager example:
 
 ```bash
 npm install -g pm2
-pm2 start npm --name 9router -- start
+pm2 start npm --name relay-ai -- start
 pm2 save
 pm2 startup
 ```
@@ -1146,31 +1128,31 @@ pm2 startup
 ### Docker
 
 Published images (multi-platform `linux/amd64` + `linux/arm64`):
-- Docker Hub: [`decolua/9router`](https://hub.docker.com/r/decolua/9router)
-- GHCR: [`ghcr.io/decolua/9router`](https://github.com/decolua/9router/pkgs/container/9router)
+- Docker Hub: [`decolua/relay-proxy`](https://hub.docker.com/r/decolua/relay-proxy)
+- GHCR: [`ghcr.io/thinhnguyendn931911/relay-proxy`](https://github.com/thinhnguyendn931911/relay-proxy/pkgs/container/relay-proxy)
 
 **Quick start (use published image):**
 
 ```bash
 docker run -d \
-  --name 9router \
+  --name relay-ai \
   -p 20128:20128 \
-  -v "$HOME/.9router:/app/data" \
+  -v "$HOME/.relay-ai:/app/data" \
   -e DATA_DIR=/app/data \
   --env-file .env \
-  decolua/9router:latest
+  decolua/relay-proxy:latest
 ```
 
-→ Open http://localhost:20128
+-> Open http://localhost:20128
 
 **Build from source (dev):**
 
 ```bash
-git clone https://github.com/decolua/9router.git
-cd 9router/app
-docker build -t 9router .
-docker run -d --name 9router -p 20128:20128 \
-  -v "$HOME/.9router:/app/data" -e DATA_DIR=/app/data 9router
+git clone https://github.com/thinhnguyendn931911/relay-proxy.git
+cd relay-proxy
+docker build -t relay-ai .
+docker run -d --name relay-ai -p 20128:20128 \
+  -v "$HOME/.relay-ai:/app/data" -e DATA_DIR=/app/data relay-ai
 ```
 
 **Container defaults:**
@@ -1180,31 +1162,31 @@ docker run -d --name 9router -p 20128:20128 \
 **Useful commands:**
 
 ```bash
-docker logs -f 9router
-docker restart 9router
-docker stop 9router && docker rm 9router
-docker pull decolua/9router:latest   # update to latest
+docker logs -f relay-ai
+docker restart relay-ai
+docker stop relay-ai && docker rm relay-ai
+docker pull decolua/relay-proxy:latest   # update to latest
 ```
 
-**Data persistence:** `$HOME/.9router/db/data.sqlite` on host ↔ `/app/data/db/data.sqlite` in container.
+**Data persistence:** `$HOME/.relay-ai/db/data.sqlite` on host <-> `/app/data/db/data.sqlite` in container.
 
 ### Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `JWT_SECRET` | Auto-generated (`~/.9router/jwt-secret`) | JWT signing secret for dashboard auth cookie (override to share across instances) |
+| `JWT_SECRET` | Auto-generated (`~/.relay-ai/jwt-secret`) | JWT signing secret for dashboard auth cookie (override to share across instances) |
 | `INITIAL_PASSWORD` | `123456` | First login password when no saved hash exists |
-| `DATA_DIR` | `~/.9router` | Main app data location (SQLite at `$DATA_DIR/db/data.sqlite`) |
+| `DATA_DIR` | `~/.relay-ai` | Main app data location (SQLite at `$DATA_DIR/db/data.sqlite`) |
 | `PORT` | framework default | Service port (`20128` in examples) |
 | `HOSTNAME` | framework default | Bind host (Docker defaults to `0.0.0.0`) |
 | `NODE_ENV` | runtime default | Set `production` for deploy |
 | `DATABASE_URL` | empty | Postgres connection string for hosted SaaS and multi-tenant mode |
 | `BASE_URL` | `http://localhost:20128` | Server-side internal base URL used by cloud sync jobs |
-| `CLOUD_URL` | `https://9router.com` | Server-side cloud sync endpoint base URL |
+| `CLOUD_URL` | production URL | Server-side cloud sync endpoint base URL |
 | `NEXT_PUBLIC_BASE_URL` | `http://localhost:3000` | Backward-compatible/public base URL (prefer `BASE_URL` for server runtime) |
-| `NEXT_PUBLIC_CLOUD_URL` | `https://9router.com` | Backward-compatible/public cloud URL (prefer `CLOUD_URL` for server runtime) |
-| `NEXT_PUBLIC_APP_NAME` | `Relay AI` in `.env.example` | Public app name used by SaaS landing/app UI |
-| `NEXT_PUBLIC_ENDPOINT_BASE_URL` | `http://localhost:20128/v1` in `.env.example` | Public endpoint shown to users for client configuration |
+| `NEXT_PUBLIC_CLOUD_URL` | production URL | Backward-compatible/public cloud URL (prefer `CLOUD_URL` for server runtime) |
+| `NEXT_PUBLIC_APP_NAME` | `Relay AI` | Public app name used by SaaS landing/app UI |
+| `NEXT_PUBLIC_ENDPOINT_BASE_URL` | `http://localhost:20128/v1` | Public endpoint shown to users for client configuration |
 | `API_KEY_SECRET` | `endpoint-proxy-api-key-secret` | HMAC secret for generated API keys |
 | `MACHINE_ID_SALT` | `endpoint-proxy-salt` | Salt for stable machine ID hashing |
 | `ENABLE_REQUEST_LOGS` | `false` | Enables request/response logs under `logs/` |
@@ -1230,17 +1212,17 @@ Notes:
 
 ### Runtime Files and Storage
 
-- Main app state: `${DATA_DIR}/db/data.sqlite` (SQLite — providers, combos, aliases, keys, settings, usage history)
+- Main app state: `${DATA_DIR}/db/data.sqlite` (SQLite - providers, combos, aliases, keys, settings, usage history)
 - Auto backups: `${DATA_DIR}/db/backups/`
 - Optional request/translator logs: `<repo>/logs/...` when `ENABLE_REQUEST_LOGS=true`
-- Both `${DATA_DIR}` and `~/.9router` resolve to the same location in a Docker container — the symlink `/root/.9router -> /app/data` is created at build time.
+- Both `${DATA_DIR}` and `~/.relay-ai` resolve to the same location in a Docker container - the symlink `/root/.relay-ai -> /app/data` is created at build time.
 - Hosted SaaS deployments store multi-tenant data in Postgres. Use scheduled `pg_dump` backups and keep copies off-box.
 
 </details>
 
 ---
 
-## 📊 Available Models
+## Available Models
 
 <details>
 <summary><b>View all available models</b></summary>
@@ -1307,22 +1289,22 @@ Notes:
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **"Language model did not provide messages"**
-- Provider quota exhausted → Check dashboard quota tracker
+- Provider quota exhausted -> Check dashboard quota tracker
 - Solution: Use combo fallback or switch to cheaper tier
 
 **Rate limiting**
-- Subscription quota out → Fallback to GLM/MiniMax
-- Add combo: `cc/claude-opus-4-7 → glm/glm-5.1 → kr/claude-sonnet-4.5`
+- Subscription quota out -> Fallback to GLM/MiniMax
+- Add combo: `cc/claude-opus-4-7 -> glm/glm-5.1 -> kr/claude-sonnet-4.5`
 
 **OAuth token expired**
-- Auto-refreshed by 9Router
-- If issues persist: Dashboard → Provider → Reconnect
+- Auto-refreshed by Relay AI
+- If issues persist: Dashboard -> Provider -> Reconnect
 
 **High costs**
-- Enable RTK in Dashboard → Endpoint settings (default ON, saves 20-40% tokens)
+- Enable RTK in Dashboard -> Endpoint settings (default ON, saves 20-40% tokens)
 - Check usage stats in Dashboard
 - Switch primary model to GLM/MiniMax
 - Use free tier (Kiro, OpenCode Free, Vertex) for non-critical tasks
@@ -1339,7 +1321,7 @@ Notes:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js 20+
 - **Framework**: Next.js 16
@@ -1351,7 +1333,7 @@ Notes:
 
 ---
 
-## 📝 API Reference
+## API Reference
 
 ### Chat Completions
 
@@ -1375,55 +1357,48 @@ Content-Type: application/json
 GET http://localhost:20128/v1/models
 Authorization: Bearer your-api-key
 
-→ Returns all models + combos in OpenAI format
+-> Returns all models + combos in OpenAI format
 ```
 
-## 📧 Support
+## Support
 
-- **Website**: [9router.com](https://9router.com)
-- **GitHub**: [github.com/decolua/9router](https://github.com/decolua/9router)
-- **Issues**: [github.com/decolua/9router/issues](https://github.com/decolua/9router/issues)
-
----
-
-## 👥 Contributors
-
-Thanks to all contributors who helped make 9Router better!
-
-[![Contributors](https://contrib.rocks/image?repo=decolua/9router&max=150&columns=15&anon=1&v=20260309)](https://github.com/decolua/9router/graphs/contributors)
+- **GitHub**: [github.com/thinhnguyendn931911/relay-proxy](https://github.com/thinhnguyendn931911/relay-proxy)
+- **Issues**: [github.com/thinhnguyendn931911/relay-proxy/issues](https://github.com/thinhnguyendn931911/relay-proxy/issues)
 
 ---
 
-## 📊 Star Chart
+## Contributors
 
-[![Star Chart](https://starchart.cc/decolua/9router.svg?variant=adaptive)](https://starchart.cc/decolua/9router)
+Thanks to all contributors who helped make Relay AI better!
 
-
-
-## 🔀 Forks
-
-**[OmniRoute](https://github.com/diegosouzapw/OmniRoute)** — A full-featured TypeScript fork of 9Router. Adds 36+ providers, 4-tier auto-fallback, multi-modal APIs (images, embeddings, audio, TTS), circuit breaker, semantic cache, LLM evaluations, and a polished dashboard. 368+ unit tests. Available via npm and Docker.
+[![Contributors](https://contrib.rocks/image?repo=thinhnguyendn931911/relay-proxy&max=150&columns=15&anon=1)](https://github.com/thinhnguyendn931911/relay-proxy/graphs/contributors)
 
 ---
 
-## 🙏 Acknowledgments
+## Star Chart
+
+[![Star Chart](https://starchart.cc/thinhnguyendn931911/relay-proxy.svg?variant=adaptive)](https://starchart.cc/thinhnguyendn931911/relay-proxy)
+
+---
+
+## Acknowledgments
 
 Built on the shoulders of giants:
 
-- **CLIProxyAPI(https://github.com/router-for-me/CLIProxyAPI)** — original Go implementation that inspired this JavaScript port.
-- **[RTK](https://github.com/rtk-ai/rtk)** ![Stars](https://img.shields.io/github/stars/rtk-ai/rtk?style=flat&color=yellow) — Rust token-saver. 9Router ports its compression pipeline to JS → **−20-40% input tokens** on every request.
-- **[Caveman](https://github.com/JuliusBrussee/caveman)** ![Stars](https://img.shields.io/github/stars/JuliusBrussee/caveman?style=flat&color=yellow) by **[@JuliusBrussee](https://github.com/JuliusBrussee)** — viral *"why use many token when few token do trick"*. 9Router adapts its prompt → **−65% output tokens**.
+- **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** - original Go implementation that inspired this JavaScript port.
+- **[RTK](https://github.com/rtk-ai/rtk)** ![Stars](https://img.shields.io/github/stars/rtk-ai/rtk?style=flat&color=yellow) - Rust token-saver. Relay AI ports its compression pipeline to JS, saving **20-40% input tokens** on every request.
+- **[Caveman](https://github.com/JuliusBrussee/caveman)** ![Stars](https://img.shields.io/github/stars/JuliusBrussee/caveman?style=flat&color=yellow) by **[@JuliusBrussee](https://github.com/JuliusBrussee)** - viral *"why use many token when few token do trick"*. Relay AI adapts its prompt, saving **up to 65% output tokens**.
 
-Huge thanks to these authors — without their work, 9Router's token-saving features wouldn't exist. ⭐ them on GitHub!
+Huge thanks to these authors - without their work, Relay AI's token-saving features wouldn't exist.
 
 ---
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ for developers who code 24/7</sub>
+  <sub>Built with love for developers who code 24/7</sub>
 </div>
