@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { proxy as legacyProxy } from "./dashboardGuard";
 import { getUserById } from "./lib/saas/userRepo.js";
+import { checkRateLimit } from "./lib/rateLimit.js";
 
 const isClerkProtectedRoute = createRouteMatcher(["/app(.*)", "/dashboard(.*)"]);
 const isClerkAwareRoute = createRouteMatcher(["/app(.*)", "/dashboard(.*)", "/api/saas(.*)", "/api/stripe(.*)"]);
@@ -100,8 +101,30 @@ async function clerkProxy(auth, request) {
 
 const clerkProxyHandler = clerkMiddleware(clerkProxy);
 
+const RATE_LIMITED_PATHS = ["/api/auth/login", "/sign-in", "/sign-up", "/api/saas/clerk-webhook", "/api/stripe/webhook"];
+
+function getClientIp(request) {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || request.headers.get("x-real-ip")
+    || request.ip
+    || "unknown";
+}
+
 export async function proxy(request, event) {
-  if (isPublicLlmApi(request.nextUrl.pathname)) {
+  const { pathname } = request.nextUrl;
+
+  if (RATE_LIMITED_PATHS.some((p) => pathname.startsWith(p))) {
+    const ip = getClientIp(request);
+    const { allowed, retryAfter } = checkRateLimit(`ip:${ip}:${pathname}`, { maxRequests: 30, windowMs: 60_000 });
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } },
+      );
+    }
+  }
+
+  if (isPublicLlmApi(pathname)) {
     return legacyProxy(request);
   }
   return hasClerkConfig ? clerkProxyHandler(request, event) : legacyProxy(request);

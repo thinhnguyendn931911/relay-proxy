@@ -1,11 +1,11 @@
 <div align="center">
   <img src="./images/9router.png?1" alt="9Router Dashboard" width="800"/>
   
-  # 9Router - FREE AI Router & Token Saver
+  # 9Router - SaaS AI Gateway & Token Saver
   
-  **Never stop coding. Save 20-40% tokens with RTK + auto-fallback to FREE & cheap AI models.**
+  **Run a hosted AI gateway for coding teams: user API keys, plan quotas, Stripe billing, operator controls, RTK token savings, and provider fallback.**
   
-  **Connect All AI Code Tools (Claude Code, Cursor, Antigravity, Copilot, Codex, Gemini, OpenCode, Cline, OpenClaw...) to 40+ AI Providers & 100+ Models.**
+  **Connect Claude Code, Cursor, Antigravity, Copilot, Codex, Gemini, OpenCode, Cline, OpenClaw, and other OpenAI-compatible tools to 40+ AI providers and 100+ models.**
   
   [![npm](https://img.shields.io/npm/v/9router.svg)](https://www.npmjs.com/package/9router)
   [![Downloads](https://img.shields.io/npm/dm/9router.svg)](https://www.npmjs.com/package/9router)
@@ -15,7 +15,7 @@
 
   <a href="https://trendshift.io/repositories/22628" target="_blank"><img src="https://trendshift.io/api/badge/repositories/22628" alt="decolua%2F9router | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
   
-  [🚀 Quick Start](#-quick-start) • [💡 Features](#-key-features) • [📖 Setup](#-setup-guide) • [🌐 Website](https://9router.com)
+  [🚀 Quick Start](#-quick-start) • [💼 SaaS Product](#-saas-product) • [💡 Features](#-key-features) • [📖 Setup](#-setup-guide) • [🌐 Website](https://9router.com)
 
   [🇻🇳 Tiếng Việt](./i18n/README.vi.md) • [🇨🇳 中文](./i18n/README.zh-CN.md) • [🇯🇵 日本語](./i18n/README.ja-JP.md)
 </div>
@@ -24,21 +24,21 @@
 
 ## 🤔 Why 9Router?
 
-**Stop wasting money, tokens and hitting limits:**
+**Ship an AI gateway people can actually use, pay for, and operate:**
 
-- ❌ Subscription quota expires unused every month
-- ❌ Rate limits stop you mid-coding
-- ❌ Tool outputs (git diff, grep, ls...) burn tokens fast
-- ❌ Expensive APIs ($20-50/month per provider)
-- ❌ Manual switching between providers
+- ❌ Teams need one endpoint for many AI coding tools
+- ❌ Subscription quotas, API keys, and model access get hard to manage
+- ❌ Tool outputs (`git diff`, `grep`, `ls`...) burn tokens fast
+- ❌ Public deployments need sign-in, user-scoped keys, quotas, and billing
+- ❌ Operators need visibility into users, plans, usage, and abuse controls
 
 **9Router solves this:**
 
-- ✅ **RTK Token Saver** - Auto-compress tool_result content, save 20-40% tokens per request
-- ✅ **Maximize subscriptions** - Track quota, use every bit before reset
-- ✅ **Auto fallback** - Subscription → Cheap → Free, zero downtime
-- ✅ **Multi-account** - Round-robin between accounts per provider
-- ✅ **Universal** - Works with Claude Code, Codex, Cursor, Cline, any CLI tool
+- ✅ **SaaS-ready gateway** - Clerk auth, per-user API keys, plan quotas, RPM limits, and Stripe billing
+- ✅ **RTK Token Saver** - Auto-compress tool_result content and save 20-40% tokens per request
+- ✅ **Smart routing** - Subscription → Cheap → Free fallback with provider quota tracking
+- ✅ **Operator control** - Manage users, plans, usage, suspension, trials, and production operations
+- ✅ **Universal endpoint** - OpenAI-compatible API for Claude Code, Codex, Cursor, Cline, and more
 
 ---
 
@@ -52,10 +52,12 @@
        │ http://localhost:20128/v1
        ↓
 ┌─────────────────────────────────────────────┐
-│           9Router (Smart Router)            │
+│       9Router SaaS Gateway / Smart Router   │
+│  • Clerk auth + user-scoped API keys        │
+│  • Plans, quotas, RPM limits, Stripe billing│
 │  • RTK Token Saver (cut tool_result tokens) │
 │  • Format translation (OpenAI ↔ Claude)     │
-│  • Quota tracking                           │
+│  • User and provider quota tracking         │
 │  • Auto token refresh                       │
 └──────┬──────────────────────────────────────┘
        │
@@ -72,7 +74,52 @@ Result: Never stop coding, minimal cost + 20-40% token savings via RTK
 
 ## ⚡ Quick Start
 
-**1. Install globally:**
+Choose the path that matches how you want to run 9Router.
+
+### Hosted SaaS user
+
+**1. Sign in to the hosted app**
+
+Open your deployment and sign in with Clerk:
+
+```
+https://your-9router-domain.com/sign-in
+```
+
+**2. Create a user API key**
+
+Go to `/app/keys`, create a user-scoped `sk_user_...` key, and copy it once.
+
+**3. Configure your AI coding tool**
+
+```
+Claude Code/Codex/OpenClaw/Cursor/Cline Settings:
+  Endpoint: https://your-9router-domain.com/v1
+  API Key: sk_user_...
+  Model: kr/claude-sonnet-4.5
+```
+
+Use `/app/usage` to monitor tokens and requests, `/app/plan` to view quota and billing, and `/app/docs` for client snippets.
+
+### Local development
+
+```bash
+cp .env.example .env
+npm install
+PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
+```
+
+Default local URLs:
+- Landing page: `http://localhost:20128`
+- User app: `http://localhost:20128/app/keys`
+- Operator dashboard: `http://localhost:20128/dashboard`
+- OpenAI-compatible API: `http://localhost:20128/v1`
+
+Local development can use SQLite fallback. Hosted SaaS deployments should use Postgres, Clerk, and Stripe.
+
+### Local package install
+
+The public package can still run a local gateway:
 
 ```bash
 npm install -g 9router
@@ -81,41 +128,51 @@ npm install -g 9router
 
 🎉 Dashboard opens at `http://localhost:20128`
 
-**2. Connect a FREE provider (no signup needed):**
+Connect providers, generate an API key, and point your local tool at `http://localhost:20128/v1`.
 
-Dashboard → Providers → Connect **Kiro AI** (free Claude unlimited) or **OpenCode Free** (no auth) → Done!
-
-**3. Use in your CLI tool:**
-
-```
-Claude Code/Codex/OpenClaw/Cursor/Cline Settings:
-  Endpoint: http://localhost:20128/v1
-  API Key: [copy from dashboard]
-  Model: kr/claude-sonnet-4.5
-```
-
-**That's it!** Start coding with FREE AI models.
-
-**Alternative: run from source (this repository):**
-
-This repository package is private (`9router-app`), so source/Docker execution is the expected local development path.
+### Production
 
 ```bash
-cp .env.example .env
 npm install
-PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
-```
-
-Production mode:
-
-```bash
 npm run build
-PORT=20128 HOSTNAME=0.0.0.0 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run start
+PORT=20128 HOSTNAME=0.0.0.0 NODE_ENV=production npm run start
 ```
 
-Default URLs:
-- Dashboard: `http://localhost:20128/dashboard`
-- OpenAI-compatible API: `http://localhost:20128/v1`
+For hosted SaaS, configure `DATABASE_URL`, Clerk keys, Stripe keys, secure secrets, reverse proxy/TLS, and backups before opening signup.
+
+---
+
+## 💼 SaaS Product
+
+9Router can run as a hosted SaaS gateway in front of your provider accounts and model routing rules.
+
+| Area | Capability |
+|------|------------|
+| **Authentication** | Clerk sign-in/sign-up, protected `/app/*` user routes, operator-gated `/dashboard/*` routes |
+| **User API keys** | Per-user `sk_user_...` keys with HMAC storage, create/list/revoke lifecycle, and one-time plaintext display |
+| **Usage controls** | Monthly token caps, plan-based model gating, per-user RPM limits, suspended-user blocking |
+| **Billing** | Stripe Checkout for upgrades, Stripe Customer Portal for paid users, subscription webhook sync |
+| **User dashboard** | `/app/keys`, `/app/usage`, `/app/plan`, and `/app/docs` for self-serve onboarding |
+| **Operator admin** | User management, suspension/reactivation, operator promotion, plan editing, aggregate usage views |
+| **Data layer** | Postgres multi-tenant mode with SQLite fallback for local/private installs |
+| **Operations** | `/api/health`, VPS/Node process deployment, reverse proxy/TLS, trial expiration, and backup guidance |
+
+### End-User Workflow
+
+1. Sign in or sign up through Clerk.
+2. Open `/app/keys` and create a user API key.
+3. Configure your AI tool with `https://your-domain/v1` and the generated key.
+4. Use `/app/usage` to track requests and token consumption.
+5. Use `/app/plan` to view plan limits, upgrade through Stripe Checkout, or open Stripe Customer Portal.
+6. Use `/app/docs` for ready-to-copy client snippets.
+
+### Operator Workflow
+
+1. Deploy with Postgres, Clerk, Stripe, and secure production secrets.
+2. Let the first synced Clerk user become the initial operator before public signup opens.
+3. Configure provider accounts, model combos, plans, quotas, and RPM limits.
+4. Manage users from `/dashboard/users`, plans from `/dashboard/plans`, and aggregate usage from `/dashboard/usage`.
+5. Monitor `/api/health`, run trial expiration on schedule, and keep Postgres backups off-box.
 
 ---
 
@@ -498,14 +555,13 @@ Seamless translation between formats:
 
 > **💡 IMPORTANT - Understanding Dashboard Costs:**
 > 
-> The "cost" displayed in Usage Analytics is **for tracking and comparison purposes only**. 
-> 9Router itself **never charges** you anything. You only pay providers directly (if using paid services).
+> The provider "cost" displayed in Usage Analytics is **for upstream tracking and comparison**. 
+> SaaS subscription status and invoices are handled separately through Stripe on `/app/plan`.
 > 
-> **Example:** If your dashboard shows "$290 total cost" while using iFlow models, this represents 
-> what you would have paid using paid APIs directly. Your actual cost = **$0** (iFlow is free unlimited).
+> **Example:** If your dashboard shows "$290 estimated provider cost" while using free models, this represents 
+> what comparable paid API usage might have cost. Your SaaS plan and provider bills are separate.
 > 
-> Think of it as a "savings tracker" showing how much you're saving by using free models or 
-> routing through 9Router!
+> Think of it as a savings and optimization signal for routing decisions.
 
 ### 🌐 Deploy Anywhere
 
@@ -518,58 +574,69 @@ Seamless translation between formats:
 
 ---
 
-## 💰 Pricing at a Glance
+## 💰 Plans, Provider Costs, and Billing
 
-| Tier | Provider | Cost | Quota Reset | Best For |
-|------|----------|------|-------------|----------|
-| **🚀 TOKEN SAVER** | **RTK (built-in)** | **FREE** | Always on | **Save 20-40% tokens on EVERY request** |
-| **💳 SUBSCRIPTION** | Claude Code (Pro/Max) | $20-200/mo | 5h + weekly | Already subscribed |
-| | Codex (Plus/Pro) | $20-200/mo | 5h + weekly | OpenAI users |
-| | GitHub Copilot | $10-19/mo | Monthly | GitHub users |
-| | Cursor IDE | $20/mo | Monthly | Cursor users |
-| **💰 CHEAP** | GLM-5.1 / GLM-4.7 | $0.6/1M | Daily 10AM | Budget backup |
-| | MiniMax M2.7 | $0.2/1M | 5-hour rolling | Cheapest option |
-| | Kimi K2.5 | $9/mo flat | 10M tokens/mo | Predictable cost |
-| **🆓 FREE** | Kiro AI | $0 | Unlimited | Claude 4.5 + GLM-5 + MiniMax free |
-| | OpenCode Free | $0 | Unlimited | No auth, auto-fetch models |
-| | Vertex AI | $300 credits | New GCP accounts | Gemini 3 Pro + DeepSeek + GLM-5 |
+9Router has two cost layers:
 
-**💡 Pro Tip:** RTK + Kiro AI + OpenCode Free combo = **$0 cost + 20-40% token savings**!
+| Layer | Who manages it | What it covers |
+|-------|----------------|----------------|
+| **SaaS plan** | Your 9Router deployment via Stripe | User access, monthly token quota, RPM limit, model access, checkout, and customer portal |
+| **Provider cost** | The provider account owner | Claude Code, Codex, Copilot, Cursor, GLM, MiniMax, Kiro, OpenCode Free, Vertex, and other upstream accounts |
+
+Default SaaS plans are seeded in the database:
+
+| Plan | Included limits | Best For |
+|------|-----------------|----------|
+| **Free trial** | 14 days, limited models, trial token quota | New users testing the hosted gateway |
+| **Paid** | Higher monthly token quota, higher RPM, broader model access | Regular users and teams |
+
+Operators can tune plan token caps, RPM limits, allowed model patterns, and Stripe price IDs from the admin dashboard.
+
+Provider routing still supports the same cost strategy:
+
+| Tier | Provider | Provider Cost | Quota Reset | Best For |
+|------|----------|---------------|-------------|----------|
+| **🚀 TOKEN SAVER** | **RTK (built-in)** | **No upstream cost** | Always on | **Save 20-40% tokens on EVERY request** |
+| **💳 SUBSCRIPTION** | Claude Code, Codex, Copilot, Cursor | Provider subscription | 5h, weekly, or monthly | Already subscribed |
+| **💰 CHEAP** | GLM-5.1 / GLM-4.7, MiniMax, Kimi | Low provider/API cost | Daily, rolling, or monthly | Budget backup |
+| **🆓 FREE** | Kiro AI, OpenCode Free, Vertex credits | Provider free tier/credits | Provider-defined | Emergency fallback and low-cost onboarding |
+
+**💡 Pro Tip:** RTK + Kiro AI + OpenCode Free can reduce upstream provider cost while the SaaS layer still enforces user plans, quotas, and billing.
 
 ---
 
-### 📊 Understanding 9Router Costs & Billing
+### 📊 Understanding Costs and Billing
 
-**9Router Billing Reality:**
+**Hosted SaaS billing:**
 
-✅ **9Router software = FREE forever** (open source, never charges)  
-✅ **Dashboard "costs" = Display/tracking only** (not actual bills)  
-✅ **You pay providers directly** (subscriptions or API fees)  
-✅ **FREE providers stay FREE** (iFlow, Kiro, Qwen = $0 unlimited)  
-❌ **9Router never sends invoices** or charges your card
+✅ Users upgrade through Stripe Checkout from `/app/plan`  
+✅ Paid users manage subscriptions through Stripe Customer Portal  
+✅ Stripe webhooks sync active, canceled, and past-due subscription status  
+✅ Plan quotas and RPM limits are enforced before provider routing  
+✅ Operators can edit plan limits and model access from `/dashboard/plans`
 
-**How Cost Display Works:**
+**Provider cost tracking:**
 
-The dashboard shows **estimated costs** as if you were using paid APIs directly. This is **not billing** - it's a comparison tool to show your savings.
+The dashboard can also show estimated upstream provider costs. Those estimates help users and operators understand savings from RTK, free providers, subscriptions, and fallback rules.
 
 **Example Scenario:**
 ```
 Dashboard Display:
 • Total Requests: 1,662
 • Total Tokens: 47M
-• Display Cost: $290
+• Estimated Provider Cost: $290
 
-Reality Check:
+Provider Reality Check:
 • Provider: iFlow (FREE unlimited)
-• Actual Payment: $0.00
-• What $290 Means: Amount you SAVED by using free models!
+• Actual Upstream Provider Payment: $0.00
+• What $290 Means: Approximate provider cost avoided by using free models
 ```
 
-**Payment Rules:**
-- **Subscription providers** (Claude Code, Codex): Pay them directly via their websites
-- **Cheap providers** (GLM, MiniMax): Pay them directly, 9Router just routes
-- **FREE providers** (iFlow, Kiro, Qwen): Genuinely free forever, no hidden charges
-- **9Router**: Never charges anything, ever
+**Payment rules:**
+- **SaaS plan**: Paid through your 9Router deployment's Stripe integration.
+- **Subscription providers**: Paid directly to Claude Code, Codex, Copilot, Cursor, and similar services.
+- **Cheap providers**: Paid directly to providers such as GLM, MiniMax, Kimi, or OpenRouter.
+- **Free providers/credits**: Subject to the provider's current free tier and terms.
 
 ---
 
@@ -644,29 +711,34 @@ Access via: WhatsApp, Telegram, Slack, Discord, iMessage, Signal...
 <details>
 <summary><b>📊 Why does my dashboard show high costs?</b></summary>
 
-The dashboard tracks your token usage and displays **estimated costs** as if you were using paid APIs directly. This is **not actual billing** - it's a reference to show how much you're saving by using free models or existing subscriptions through 9Router.
+The dashboard tracks token usage and can display **estimated upstream provider costs**. These estimates are separate from your 9Router SaaS plan and help show what routing, RTK compression, free providers, or existing subscriptions are saving.
 
 **Example:**
-- **Dashboard shows:** "$290 total cost"
+- **Dashboard shows:** "$290 estimated provider cost"
 - **Reality:** You're using iFlow (FREE unlimited)
-- **Your actual cost:** **$0.00**
-- **What $290 means:** Amount you **saved** by using free models instead of paid APIs!
+- **Actual upstream provider payment:** **$0.00**
+- **What $290 means:** Approximate provider cost avoided by using free models instead of paid APIs
 
-The cost display is a "savings tracker" to help you understand your usage patterns and optimization opportunities.
+The cost display is an analytics and savings signal. Your SaaS plan status, quota, and Stripe billing are managed separately from `/app/plan`.
 
 </details>
 
 <details>
-<summary><b>💳 Will I be charged by 9Router?</b></summary>
+<summary><b>💳 How does SaaS billing work?</b></summary>
 
-**No.** 9Router is free, open-source software that runs on your own computer. It never charges you anything.
+Hosted 9Router deployments use Stripe for paid plans.
 
-**You only pay:**
-- ✅ **Subscription providers** (Claude Code $20/mo, Codex $20-200/mo) → Pay them directly on their websites
-- ✅ **Cheap providers** (GLM, MiniMax) → Pay them directly, 9Router just routes your requests
-- ❌ **9Router itself** → **Never charges anything, ever**
+**Users can:**
+- Start on the seeded free trial plan
+- Upgrade from `/app/plan` through Stripe Checkout
+- Manage paid subscriptions through Stripe Customer Portal
+- See current plan, subscription status, token usage, and quota
 
-9Router is a local proxy/router. It doesn't have your credit card, can't send invoices, and has no billing system. It's completely free software.
+**Operators can:**
+- Configure Stripe keys and price IDs
+- Edit plan token caps, RPM limits, and allowed models
+- Suspend/reactivate users
+- View aggregate usage and subscription identifiers
 
 </details>
 
@@ -680,7 +752,7 @@ These are free services offered by those respective companies:
 - **OpenCode Free**: No-auth passthrough proxy, models auto-fetched from `opencode.ai/zen/v1/models`
 - **Vertex AI**: $300 free credits for new Google Cloud accounts (90 days)
 
-9Router just routes your requests to them - there's no "catch" or future billing. They're truly free services, and 9Router makes them easy to use with fallback support.
+9Router routes requests to these providers and makes them easy to use with fallback support. Free provider availability is controlled by each provider, while your hosted 9Router plan and quota are controlled by the SaaS deployment.
 
 **Discontinued free tiers (no longer recommended):**
 - ❌ **iFlow**: Was free unlimited, now changed to paid (2026)
@@ -694,13 +766,13 @@ These are free services offered by those respective companies:
 
 **Free-First Strategy:**
 
-1. **Start with 100% free combo:**
+1. **Start with a free-provider combo when your plan allows it:**
    ```
    1. gc/gemini-3-flash (180K/month free from Google)
    2. if/kimi-k2-thinking (unlimited free from iFlow)
    3. qw/qwen3-coder-plus (unlimited free from Qwen)
    ```
-   **Cost: $0/month**
+   **Upstream provider cost: often $0/month, subject to provider terms**
 
 2. **Add cheap backup** only if you need it:
    ```
@@ -712,7 +784,7 @@ These are free services offered by those respective companies:
    - Only if you already have them
    - 9Router helps maximize their value through quota tracking
 
-**Result:** Most users can operate at $0/month using only free tiers!
+**Result:** Many users can minimize upstream provider spend while the SaaS plan still governs account access, monthly quota, and rate limits.
 
 </details>
 
@@ -1015,33 +1087,56 @@ Model: cc/claude-opus-4-7
 </details>
 
 <details>
-<summary><b>🚀 Deployment</b></summary>
+<summary><b>🚀 Deployment and Operations</b></summary>
 
-### VPS Deployment
+### Local Development
 
 ```bash
-# Clone and install
 git clone https://github.com/decolua/9router.git
 cd 9router
+cp .env.example .env
+npm install
+PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
+```
+
+Local URLs:
+- Landing page: `http://localhost:20128`
+- User app: `http://localhost:20128/app/keys`
+- Operator dashboard: `http://localhost:20128/dashboard`
+- OpenAI-compatible API: `http://localhost:20128/v1`
+
+SQLite fallback works for local/private development when `DATABASE_URL` is not set. Hosted SaaS deployments should set `DATABASE_URL` and run Postgres.
+
+### Production SaaS Deployment
+
+Recommended hosted stack:
+- **App process:** Next.js/Node on a VPS or container host
+- **Database:** Postgres via `DATABASE_URL`
+- **Auth:** Clerk publishable/secret keys plus Clerk webhook secret
+- **Billing:** Stripe secret key, webhook secret, paid price ID, and customer portal return URL
+- **Network:** Caddy/Nginx reverse proxy with HTTPS/TLS
+- **Health:** `/api/health`
+- **Maintenance:** trial-expiration schedule and nightly `pg_dump` backups stored off-box
+
+```bash
+git clone https://github.com/decolua/9router.git
+cd 9router
+cp .env.example .env
 npm install
 npm run build
+PORT=20128 HOSTNAME=0.0.0.0 NODE_ENV=production npm run start
+```
 
-# Configure
-export JWT_SECRET="your-secure-secret-change-this"
-export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/9router"
-export PORT="20128"
-export HOSTNAME="0.0.0.0"
-export NODE_ENV="production"
-export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
-export NEXT_PUBLIC_CLOUD_URL="https://9router.com"
-export API_KEY_SECRET="endpoint-proxy-api-key-secret"
-export MACHINE_ID_SALT="endpoint-proxy-salt"
+First production bootstrap:
+1. Configure Clerk, Stripe, Postgres, secure secrets, and public base URLs.
+2. Start the app behind HTTPS.
+3. Sign up with the first operator account before opening public signup.
+4. Confirm `/dashboard/users`, `/dashboard/plans`, `/dashboard/usage`, and `/api/health`.
+5. Configure plan limits, provider accounts, and backups.
 
-# Start
-npm run start
+Process manager example:
 
-# Or use PM2
+```bash
 npm install -g pm2
 pm2 start npm --name 9router -- start
 pm2 save
@@ -1062,6 +1157,7 @@ docker run -d \
   -p 20128:20128 \
   -v "$HOME/.9router:/app/data" \
   -e DATA_DIR=/app/data \
+  --env-file .env \
   decolua/9router:latest
 ```
 
@@ -1102,15 +1198,26 @@ docker pull decolua/9router:latest   # update to latest
 | `PORT` | framework default | Service port (`20128` in examples) |
 | `HOSTNAME` | framework default | Bind host (Docker defaults to `0.0.0.0`) |
 | `NODE_ENV` | runtime default | Set `production` for deploy |
+| `DATABASE_URL` | empty | Postgres connection string for hosted SaaS and multi-tenant mode |
 | `BASE_URL` | `http://localhost:20128` | Server-side internal base URL used by cloud sync jobs |
 | `CLOUD_URL` | `https://9router.com` | Server-side cloud sync endpoint base URL |
 | `NEXT_PUBLIC_BASE_URL` | `http://localhost:3000` | Backward-compatible/public base URL (prefer `BASE_URL` for server runtime) |
 | `NEXT_PUBLIC_CLOUD_URL` | `https://9router.com` | Backward-compatible/public cloud URL (prefer `CLOUD_URL` for server runtime) |
+| `NEXT_PUBLIC_APP_NAME` | `Relay AI` in `.env.example` | Public app name used by SaaS landing/app UI |
+| `NEXT_PUBLIC_ENDPOINT_BASE_URL` | `http://localhost:20128/v1` in `.env.example` | Public endpoint shown to users for client configuration |
 | `API_KEY_SECRET` | `endpoint-proxy-api-key-secret` | HMAC secret for generated API keys |
 | `MACHINE_ID_SALT` | `endpoint-proxy-salt` | Salt for stable machine ID hashing |
 | `ENABLE_REQUEST_LOGS` | `false` | Enables request/response logs under `logs/` |
+| `OBSERVABILITY_ENABLED` | `true` in `.env.example` | Enables app observability hooks where supported |
 | `AUTH_COOKIE_SECURE` | `false` | Force `Secure` auth cookie (set `true` behind HTTPS reverse proxy) |
-| `REQUIRE_API_KEY` | `false` | Enforce Bearer API key on `/v1/*` routes (recommended for internet-exposed deploys) |
+| `REQUIRE_API_KEY` | `false` | Legacy/private-install toggle; SaaS `/v1/*` requests require valid user keys when SaaS mode is enabled |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | empty | Clerk browser publishable key |
+| `CLERK_SECRET_KEY` | empty | Clerk server secret key |
+| `CLERK_WEBHOOK_SECRET` | empty | Clerk webhook signing secret for user sync |
+| `STRIPE_SECRET_KEY` | empty | Stripe server secret key |
+| `STRIPE_WEBHOOK_SECRET` | empty | Stripe webhook signing secret |
+| `STRIPE_PAID_PRICE_ID` | empty | Stripe price ID used for the paid plan when no DB plan price is set |
+| `STRIPE_CUSTOMER_PORTAL_RETURN_URL` | `http://localhost:20128/app/plan` | Return URL after Stripe Customer Portal |
 | `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`, `NO_PROXY` | empty | Optional outbound proxy for upstream provider calls |
 
 Notes:
@@ -1118,6 +1225,8 @@ Notes:
 - `.env` is not baked into Docker image (`.dockerignore`); inject runtime config with `--env-file` or `-e`.
 - On Windows, `APPDATA` can be used for local storage path resolution.
 - `INSTANCE_NAME` appears in older docs/env templates, but is currently not used at runtime.
+- Set `AUTH_COOKIE_SECURE=true` when serving behind HTTPS.
+- Keep `JWT_SECRET`, `API_KEY_SECRET`, Clerk secrets, Stripe secrets, and database credentials out of source control.
 
 ### Runtime Files and Storage
 
@@ -1125,6 +1234,7 @@ Notes:
 - Auto backups: `${DATA_DIR}/db/backups/`
 - Optional request/translator logs: `<repo>/logs/...` when `ENABLE_REQUEST_LOGS=true`
 - Both `${DATA_DIR}` and `~/.9router` resolve to the same location in a Docker container — the symlink `/root/.9router -> /app/data` is created at build time.
+- Hosted SaaS deployments store multi-tenant data in Postgres. Use scheduled `pg_dump` backups and keep copies off-box.
 
 </details>
 
@@ -1221,8 +1331,8 @@ Notes:
 - Set `PORT=20128` and `NEXT_PUBLIC_BASE_URL=http://localhost:20128`
 
 **First login not working**
-- Check `INITIAL_PASSWORD` in `.env`
-- If unset, fallback password is `123456`
+- Hosted SaaS: verify Clerk keys and sign-in/sign-up routes
+- Local/private mode: check `INITIAL_PASSWORD` in `.env`; if unset, fallback password is `123456`
 
 **No request logs under `logs/`**
 - Set `ENABLE_REQUEST_LOGS=true`
@@ -1234,9 +1344,10 @@ Notes:
 - **Runtime**: Node.js 20+
 - **Framework**: Next.js 16
 - **UI**: React 19 + Tailwind CSS 4
-- **Database**: SQLite (better-sqlite3 / node:sqlite / sql.js fallback)
+- **Database**: Postgres for hosted SaaS, SQLite fallback for local/private mode
 - **Streaming**: Server-Sent Events (SSE)
-- **Auth**: OAuth 2.0 (PKCE) + JWT + API Keys
+- **Auth**: Clerk for SaaS users/operators, provider OAuth 2.0 (PKCE), JWT/private-mode auth, and API keys
+- **Billing**: Stripe Checkout, webhooks, and Customer Portal
 
 ---
 

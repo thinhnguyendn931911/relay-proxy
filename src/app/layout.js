@@ -21,6 +21,18 @@ export const metadata = {
   icons: {
     icon: "/favicon.svg",
   },
+  openGraph: {
+    title: "Relay AI - The easiest way to use an AI endpoint",
+    description: "Copy one OpenAI-compatible URL, add one API key, and send requests. Start free, upgrade when you need more tokens.",
+    type: "website",
+    siteName: "Relay AI",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Relay AI - The easiest way to use an AI endpoint",
+    description: "Copy one OpenAI-compatible URL, add one API key, and send requests. Start free, upgrade when you need more tokens.",
+  },
+  metadataBase: process.env.NEXT_PUBLIC_BASE_URL ? new URL(process.env.NEXT_PUBLIC_BASE_URL) : undefined,
 };
 
 export const viewport = {

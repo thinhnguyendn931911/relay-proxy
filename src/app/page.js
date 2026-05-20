@@ -392,6 +392,8 @@ export default function HomePage() {
             <a className="home-motion-lift inline-flex min-h-8 items-center hover:text-zinc-950" href="#endpoint">Endpoint</a>
             <a className="home-motion-lift inline-flex min-h-8 items-center hover:text-zinc-950" href="#plans">Plans</a>
             <a className="home-motion-lift inline-flex min-h-8 items-center hover:text-zinc-950" href="#features">Features</a>
+            <a className="home-motion-lift inline-flex min-h-8 items-center hover:text-zinc-950" href="/privacy">Privacy</a>
+            <a className="home-motion-lift inline-flex min-h-8 items-center hover:text-zinc-950" href="/terms">Terms</a>
           </div>
         </div>
       </footer>
