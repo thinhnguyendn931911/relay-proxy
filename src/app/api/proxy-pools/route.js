@@ -67,7 +67,11 @@ export async function GET(request) {
       boundConnectionCount: usageMap.get(pool.id) || 0,
     }));
 
-    return NextResponse.json({ proxyPools: enrichedProxyPools });
+    return NextResponse.json({
+      proxyPools: enrichedProxyPools,
+      totalConnectionCount: connections.length,
+      assignedConnectionCount: connections.filter((c) => c?.providerSpecificData?.proxyPoolId).length,
+    });
   } catch (error) {
     console.log("Error fetching proxy pools:", error);
     return NextResponse.json({ error: "Failed to fetch proxy pools" }, { status: 500 });

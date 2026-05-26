@@ -4,21 +4,30 @@ import Stripe from "stripe";
 import { getActiveSubscriptionForUser } from "@/lib/saas/subscriptionRepo.js";
 
 export async function POST() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const sub = await getActiveSubscriptionForUser(userId);
-  if (!sub?.stripeCustomerId) {
-    return NextResponse.json({ error: "No Stripe customer found" }, { status: 400 });
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: "Stripe is not configured" }, { status: 503 });
+    }
+
+    const sub = await getActiveSubscriptionForUser(userId);
+    if (!sub?.stripeCustomerId) {
+      return NextResponse.json({ error: "No Stripe customer found" }, { status: 400 });
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const returnUrl = process.env.STRIPE_CUSTOMER_PORTAL_RETURN_URL || `${process.env.NEXT_PUBLIC_APP_URL || ""}/app/plan`;
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: sub.stripeCustomerId,
+      return_url: returnUrl,
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error("[portal-session]", err.message);
+    return NextResponse.json({ error: "Payment service error" }, { status: 500 });
   }
-
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const returnUrl = process.env.STRIPE_CUSTOMER_PORTAL_RETURN_URL || `${process.env.NEXT_PUBLIC_APP_URL || ""}/app/plan`;
-
-  const session = await stripe.billingPortal.sessions.create({
-    customer: sub.stripeCustomerId,
-    return_url: returnUrl,
-  });
-
-  return NextResponse.json({ url: session.url });
 }

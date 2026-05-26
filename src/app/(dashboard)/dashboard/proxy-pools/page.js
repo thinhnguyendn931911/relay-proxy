@@ -29,6 +29,8 @@ function normalizeFormData(data = {}) {
 
 export default function ProxyPoolsPage() {
   const [proxyPools, setProxyPools] = useState([]);
+  const [totalConnectionCount, setTotalConnectionCount] = useState(0);
+  const [assignedConnectionCount, setAssignedConnectionCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showBatchImportModal, setShowBatchImportModal] = useState(false);
@@ -54,6 +56,8 @@ export default function ProxyPoolsPage() {
       const data = await res.json();
       if (res.ok) {
         setProxyPools(data.proxyPools || []);
+        setTotalConnectionCount(data.totalConnectionCount ?? 0);
+        setAssignedConnectionCount(data.assignedConnectionCount ?? 0);
       }
     } catch (error) {
       console.log("Error fetching proxy pools:", error);
@@ -314,6 +318,20 @@ export default function ProxyPoolsPage() {
     setSelectedIds((prev) => prev.filter((id) => proxyPools.some((p) => p.id === id)));
   }, [proxyPools]);
 
+  const handleBulkExport = () => {
+    const lines = proxyPools
+      .map((p) => p.proxyUrl)
+      .filter(Boolean);
+    if (lines.length === 0) return;
+    const blob = new Blob([lines.join("\n") + "\n"], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `proxy-pools-export-${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const openBatchImportModal = () => {
     setBatchImportText("");
     setShowBatchImportModal(true);
@@ -501,6 +519,9 @@ export default function ProxyPoolsPage() {
           <Button size="sm" variant="secondary" icon="upload" onClick={openBatchImportModal}>
             Batch Import
           </Button>
+          <Button size="sm" variant="secondary" icon="download" onClick={handleBulkExport} disabled={proxyPools.length === 0}>
+            Bulk Export
+          </Button>
           <Button size="sm" icon="add" onClick={openCreateModal}>Add Proxy Pool</Button>
         </div>
       </div>
@@ -520,6 +541,11 @@ export default function ProxyPoolsPage() {
           )}
           <Badge variant="default">Total: {proxyPools.length}</Badge>
           <Badge variant="success">Active: {activeCount}</Badge>
+          {totalConnectionCount > 0 && (
+            <Badge variant={totalConnectionCount - assignedConnectionCount > 0 ? "error" : "success"}>
+              {totalConnectionCount - assignedConnectionCount} unassigned
+            </Badge>
+          )}
         </div>
 
         {(selectedIds.length > 0 || healthChecking) && (
